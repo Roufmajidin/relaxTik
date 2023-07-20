@@ -161,6 +161,7 @@ class Beranda extends StatelessWidget {
               const SizedBox(height: 20),
               Container(
                 child: ListView.builder(
+                    physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     padding: const EdgeInsets.all(8),
                     itemCount: 9,
