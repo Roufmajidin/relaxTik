@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:relax_tik/view/dashboard.dart';
+import 'package:relax_tik/view/landing_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,7 +33,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/': (context) => const LandingPage(),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+        '/dashboard': (context) => const Dashboard(),
+      },
     );
   }
 }
