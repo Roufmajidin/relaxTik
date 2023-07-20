@@ -9,15 +9,16 @@ class KataSandiBaru extends StatefulWidget {
   State<KataSandiBaru> createState() => _KataSandiBaruState();
 }
 
+bool ispressed = false;
+
+final passwordController = TextEditingController();
+final usernameController = TextEditingController();
+bool isLihat = true;
+bool isLihat2 = true;
+bool hidePw = true;
+
 class _KataSandiBaruState extends State<KataSandiBaru> {
   @override
-  bool ispressed = false;
-
-  final passwordController = TextEditingController();
-  final usernameController = TextEditingController();
-  bool isLihat = false;
-  bool hidePw = false;
-
   var _formKey = GlobalKey<FormState>();
   Widget build(BuildContext context) {
     return Scaffold(
@@ -63,93 +64,121 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.all(30.0),
-            child: TextFormField(
-              style: const TextStyle(
-                  color: Color.fromARGB(
-                      255, 0, 0, 0)), // Set the text color to white
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-
-              obscureText: hidePw ? false : true,
-              validator: (value) {
-                // if (value == null ||
-                //     value.isEmpty ||
-                //     !value.contains('@') ||
-                //     !value.contains('.')) {
-                //   return 'Invalid Email (harus ada @)';
-                // }
-                return null;
-              },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                      10.0), // Adjust the radius as needed
-                ),
-
-                filled: true,
-                fillColor: Colors
-                    .white, // This should be the background color of the input field
-                labelText: 'Password',
-                suffixStyle: const TextStyle(color: Colors.white),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      isLihat ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.black,
+              padding: const EdgeInsets.all(30.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Password'),
+                  TextFormField(
+                    obscureText: isLihat,
+                    validator: (value) {
+                      // if (value == null ||
+                      //     value.isEmpty ||
+                      //     !value.contains('@') ||
+                      //     !value.contains('.')) {
+                      //   return 'Invalid Email (harus ada @)';
+                      // }
+                      return null;
+                    },
+                    onChanged: (value) {},
+                    showCursor: false,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: 'Password Anda',
+                      hintStyle:
+                          TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          style: BorderStyle.solid,
+                          color: Color.fromARGB(255, 164, 164, 164),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          style: BorderStyle.solid,
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(19),
+                      suffixStyle: const TextStyle(color: Colors.white),
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                            isLihat ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isLihat = !isLihat;
+                            });
+                          }),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isLihat = !isLihat;
-                      });
-                    }),
-                labelStyle: const TextStyle(color: Colors.black),
-              ),
-            ),
-          ),
+                    style: TextStyle(color: Colors.black, fontSize: 17),
+                  ),
+                ],
+              )),
 
           // konfirm passw
           Padding(
-            padding: const EdgeInsets.only(left: 30.0, right: 30, top: 20),
-            child: TextFormField(
-              style: const TextStyle(
-                  color: Color.fromARGB(
-                      255, 0, 0, 0)), // Set the text color to white
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-
-              obscureText: hidePw ? false : true,
-              validator: (value) {
-                // if (value == null ||
-                //     value.isEmpty ||
-                //     !value.contains('@') ||
-                //     !value.contains('.')) {
-                //   return 'Invalid Email (harus ada @)';
-                // }
-                return null;
-              },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                      10.0), // Adjust the radius as needed
-                ),
-
-                filled: true,
-                fillColor: Colors
-                    .white, // This should be the background color of the input field
-                labelText: 'Konfirmasi Password',
-                suffixStyle: const TextStyle(color: Colors.white),
-                suffixIcon: IconButton(
-                    icon: Icon(
-                      isLihat ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.black,
+              padding: const EdgeInsets.only(left: 30.0, right: 30, top: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Konfirmasi Password'),
+                  TextFormField(
+                    obscureText: isLihat2,
+                    validator: (value) {
+                      // if (value == null ||
+                      //     value.isEmpty ||
+                      //     !value.contains('@') ||
+                      //     !value.contains('.')) {
+                      //   return 'Invalid Email (harus ada @)';
+                      // }
+                      return null;
+                    },
+                    onChanged: (value) {},
+                    showCursor: false,
+                    textCapitalization: TextCapitalization.sentences,
+                    decoration: InputDecoration(
+                      hintText: 'Konfirmasi Password Anda',
+                      hintStyle:
+                          TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          style: BorderStyle.solid,
+                          color: Colors.white,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 164, 164, 164),
+                            width: 2.0),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      fillColor: Colors.white,
+                      filled: true,
+                      contentPadding: const EdgeInsets.all(19),
+                      suffixStyle: const TextStyle(color: Colors.white),
+                      suffixIcon: IconButton(
+                          icon: Icon(
+                            isLihat2 ? Icons.visibility : Icons.visibility_off,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isLihat2 = !isLihat2;
+                            });
+                          }),
                     ),
-                    onPressed: () {
-                      setState(() {
-                        isLihat = !isLihat;
-                      });
-                    }),
-                labelStyle: const TextStyle(color: Colors.black),
-              ),
-            ),
-          ),
+                    style: TextStyle(color: Colors.black, fontSize: 17),
+                  ),
+                ],
+              )),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 40),
             child: SizedBox(

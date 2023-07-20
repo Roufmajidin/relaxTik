@@ -72,34 +72,39 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
           Padding(
               padding: EdgeInsets.all(24),
               child: ispressed == false
-                  ? TextFormField(
-                      style: const TextStyle(
-                          color: Color.fromARGB(
-                              255, 0, 0, 0)), // Set the text color to white
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      validator: (value) {
-                        if (value == null ||
-                            value.isEmpty ||
-                            !value.contains('@') ||
-                            !value.contains('.')) {
-                          return 'Invalid Email (harus ada @)';
-                        }
-                        return null;
-                      },
-                      // controller: usernameController, (You can uncomment this line if you have a controller)
-
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                              10.0), // Adjust the radius as needed
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Email'),
+                        TextFormField(
+                          onChanged: (value) {},
+                          showCursor: false,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan Alamat Email',
+                            hintStyle: TextStyle(
+                                color: Colors.grey.shade600, fontSize: 12),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                style: BorderStyle.solid,
+                                color: Colors.white,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                  color: Color.fromARGB(255, 164, 164, 164),
+                                  width: 2.0),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            contentPadding: const EdgeInsets.all(19),
+                          ),
+                          style:
+                              TextStyle(color: Colors.grey[50], fontSize: 17),
                         ),
-
-                        filled: true,
-                        fillColor: Colors
-                            .white, // This should be the background color of the input field
-                        labelText: 'Masukkan Email',
-                        labelStyle: const TextStyle(color: Colors.black),
-                      ),
+                      ],
                     )
                   : SizedBox()),
           Padding(
