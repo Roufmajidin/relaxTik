@@ -1,0 +1,1 @@
+// isi view seperti biasa
