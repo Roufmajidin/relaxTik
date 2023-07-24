@@ -1,4 +1,4 @@
-package com.example.relax_tik
+package com.exaple.relax
 
 import io.flutter.embedding.android.FlutterActivity
 

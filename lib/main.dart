@@ -1,39 +1,61 @@
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:midtrans_sdk/midtrans_sdk.dart';
+import 'package:provider/provider.dart';
 import 'package:relax_tik/view/atur_ulang.dart';
+import 'package:relax_tik/view_model/controller_provider.dart';
+import 'dart:convert';
+import 'dart:io';
 
-void main() {
-  runApp(const MyApp());
+import 'package:xendit/xendit.dart';
+import "package:galaxeus_lib/galaxeus_lib.dart";
+
+void main() async {
+  String apiKey =
+      'xnd_development_c87nmgt97GWLv3QwUdY1rtymgenS71BM6kuSt1sZFll6bPaDiKagvYIVndjgQ';
+
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+  Xendit xendit = Xendit(apiKey: apiKey);
+  var res = await xendit.invoke(
+      endpoint: "POST https://api.xendit.co/v2/invoices",
+      headers: {
+        "for-user-id": "",
+      },
+      parameters: {
+        "external_id": "asoaskoaks",
+        "amount": 10000,
+      },
+      queryParameters: {"id": "saksoak"},
+      apiKey: apiKey);
+
+  // print(res);
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          // This is the theme of your application.
-          //
-          // TRY THIS: Try running your application with "flutter run". You'll see
-          // the application has a blue toolbar. Then, without quitting the app,
-          // try changing the seedColor in the colorScheme below to Colors.green
-          // and then invoke "hot reload" (save your changes or press the "hot
-          // reload" button in a Flutter-supported IDE, or press "r" if you used
-          // the command line to start the app).
-          //
-          // Notice that the counter didn't reset back to zero; the application
-          // state is not lost during the reload. To reset the state, use hot
-          // restart instead.
-          //
-          // This works for code too, not just values: Most code changes can be
-          // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
+    // Inisialisasi Midtrans SDK dengan kunci API
+    // var _clentKey = 'SB-Mid-client-uKlPRIds6oO-mQhw';
+    // var serverKey = 'SB-Mid-server-D_icXc3QC80CNAJq-JZjokYg';
+
+    // MidtransSDK.init(
+    //     config: MidtransConfig(
+    //   merchantBaseUrl: 'https://api.sandbox.midtrans.com/v2',
+    //   clientKey: _clentKey,
+    // ));
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ControllerProvider()),
+      ],
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: const AturUlangKataSandi());
+        home: AturUlangKataSandi(),
+      ),
+    );
   }
 }
 

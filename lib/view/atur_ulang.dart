@@ -1,7 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:relax_tik/view/kata_sandi_baru.dart';
+import 'package:relax_tik/view_model/controller_provider.dart';
 
 class AturUlangKataSandi extends StatefulWidget {
   const AturUlangKataSandi({super.key});
@@ -121,13 +123,16 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                   ),
                 ),
                 onPressed: () {
-                  print('Button pressed!');
-                  ispressed == false
-                      ? ispressed = true
-                      :
-                      // beda lagi
-                      ispressed = false;
-                  setState(() {});
+                  log('Button pressed!');
+                  final prov =
+                      Provider.of<ControllerProvider>(context, listen: false);
+                  prov.postPaymentToXendit();
+                  // ispressed == false
+                  //     ? ispressed = true
+                  //     :
+                  //     // beda lagi
+                  //     ispressed = false;
+                  // setState(() {});
                 },
                 child: Text(
                   ispressed == false ? 'Kirim Intruksi' : "Buka Aplikasi Email",
