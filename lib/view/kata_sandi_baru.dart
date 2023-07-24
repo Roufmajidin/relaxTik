@@ -17,6 +17,7 @@ bool isLihat = true;
 bool isLihat2 = true;
 bool hidePw = true;
 
+//
 class _KataSandiBaruState extends State<KataSandiBaru> {
   @override
   var _formKey = GlobalKey<FormState>();
