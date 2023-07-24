@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/kata_sandi_baru.dart';
+import 'package:relax_tik/view/login.dart';
 import 'package:relax_tik/view_model/controller_provider.dart';
+import 'package:relax_tik/view_model/login_controller.dart';
 
 class AturUlangKataSandi extends StatefulWidget {
   const AturUlangKataSandi({super.key});
@@ -23,22 +25,34 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
           'Atur ulang kata sandi',
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
         ),
-        leading: const Padding(
-          padding:
-              EdgeInsets.only(left: 16), // Add padding around the leading icon
-          child: Icon(Icons.arrow_back),
-        ),
+        // leading: const Padding(
+        //   padding:
+        //       EdgeInsets.only(left: 16), // Add padding around the leading icon
+        //   child: Icon(Icons.arrow_back),
+        // ),
         centerTitle: true,
-        actions: const [
+        actions: [
           Padding(
             padding: EdgeInsets.only(
                 right: 16), // Add padding around the actions element
             child: Center(
-              child: SizedBox(
-                height: 40,
-                child: Image(
-                  image: AssetImage(
-                    'assets/ikon/logo_semen.png',
+              child: InkWell(
+                onTap: () async {
+                  print("logouted");
+                  await Provider.of<LoginController>(context, listen: false)
+                      .logout();
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                  );
+                },
+                child: SizedBox(
+                  height: 40,
+                  child: Image(
+                    image: AssetImage(
+                      'assets/ikon/logo_semen.png',
+                    ),
                   ),
                 ),
               ),
