@@ -33,6 +33,7 @@ dependencies:
   cookie_jar: ^4.0.7
   cupertino_icons: ^1.0.2
   email_validator: ^2.1.17
+  external_app_launcher: ^3.1.0
   firebase_auth: ^4.6.0
   firebase_core: ^2.15.0
   firebase_service: ^0.0.1+1
@@ -45,8 +46,11 @@ dependencies:
   iconly: ^1.0.1
   intl: ^0.18.1
   midtrans_sdk: ^0.4.0
+  open_mail_app: ^0.4.5
+  pinput: ^2.3.0
   provider: ^6.0.5
   shared_preferences: ^2.1.1
+  url_launcher: ^6.1.12
   xendit: ^0.0.17
 
 dev_dependencies:

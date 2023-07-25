@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../view_model/login_controller.dart';
 
 class KataSandiBaru extends StatefulWidget {
   const KataSandiBaru({super.key});
@@ -12,10 +15,12 @@ class KataSandiBaru extends StatefulWidget {
 bool ispressed = false;
 
 final passwordController = TextEditingController();
+final newPasswordController = TextEditingController();
 final usernameController = TextEditingController();
 bool isLihat = true;
 bool isLihat2 = true;
 bool hidePw = true;
+String pass = '';
 
 //
 class _KataSandiBaruState extends State<KataSandiBaru> {
@@ -70,54 +75,55 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Password'),
-                  TextFormField(
-                    obscureText: isLihat,
-                    validator: (value) {
-                      // if (value == null ||
-                      //     value.isEmpty ||
-                      //     !value.contains('@') ||
-                      //     !value.contains('.')) {
-                      //   return 'Invalid Email (harus ada @)';
-                      // }
-                      return null;
-                    },
-                    onChanged: (value) {},
-                    showCursor: false,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: InputDecoration(
-                      hintText: 'Password Anda',
-                      hintStyle:
-                          TextStyle(color: Colors.grey.shade600, fontSize: 12),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          style: BorderStyle.solid,
-                          color: Color.fromARGB(255, 164, 164, 164),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          style: BorderStyle.solid,
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      fillColor: Colors.white,
-                      filled: true,
-                      contentPadding: const EdgeInsets.all(19),
-                      suffixStyle: const TextStyle(color: Colors.white),
-                      suffixIcon: IconButton(
-                          icon: Icon(
-                            isLihat ? Icons.visibility : Icons.visibility_off,
-                            color: Colors.black,
+                  Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      controller: passwordController,
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      obscureText: isLihat,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Password harus diisi';
+                        }
+                        return null;
+                      },
+                      showCursor: false,
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: InputDecoration(
+                        hintText: 'Password Anda',
+                        hintStyle: TextStyle(
+                            color: Colors.grey.shade600, fontSize: 12),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                            style: BorderStyle.solid,
+                            color: Color.fromARGB(255, 164, 164, 164),
                           ),
-                          onPressed: () {
-                            setState(() {
-                              isLihat = !isLihat;
-                            });
-                          }),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            style: BorderStyle.solid,
+                            color: Colors.white,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        fillColor: Colors.white,
+                        filled: true,
+                        contentPadding: const EdgeInsets.all(19),
+                        suffixStyle: const TextStyle(color: Colors.white),
+                        suffixIcon: IconButton(
+                            icon: Icon(
+                              isLihat ? Icons.visibility : Icons.visibility_off,
+                              color: Colors.black,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                isLihat = !isLihat;
+                              });
+                            }),
+                      ),
+                      style: TextStyle(color: Colors.black, fontSize: 17),
                     ),
-                    style: TextStyle(color: Colors.black, fontSize: 17),
                   ),
                 ],
               )),
@@ -130,17 +136,22 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                 children: [
                   Text('Konfirmasi Password'),
                   TextFormField(
+                    controller: newPasswordController,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     obscureText: isLihat2,
                     validator: (value) {
-                      // if (value == null ||
-                      //     value.isEmpty ||
-                      //     !value.contains('@') ||
-                      //     !value.contains('.')) {
-                      //   return 'Invalid Email (harus ada @)';
-                      // }
+                      if (value == null || value.isEmpty) {
+                        return 'Konfirmasi Password harus diisi';
+                      }
+                      if (value != pass) {
+                        return 'Konfirmasi Password tidak sesuai';
+                      }
                       return null;
                     },
-                    onChanged: (value) {},
+                    onChanged: (value) {
+                      pass = value;
+                      print(value);
+                    },
                     showCursor: false,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: InputDecoration(
@@ -196,6 +207,11 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                 ),
                 onPressed: () {
                   log('Atur Ulang');
+                  final forgotProvider =
+                      Provider.of<LoginController>(context, listen: false);
+                  forgotProvider.logout();
+                  forgotProvider.changePassword(
+                      newPassword: passwordController.text);
 
                   setState(() {});
                 },
