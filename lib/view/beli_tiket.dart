@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../view_model/tiket-controller.dart';
 
 class BeliTiket extends StatefulWidget {
   const BeliTiket({super.key});
@@ -9,17 +12,25 @@ class BeliTiket extends StatefulWidget {
 
 class _BeliTiketState extends State<BeliTiket> {
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(
+      () => Provider.of<TiketController>(context, listen: false).fetchTiket(),
+    );
+  }
+
   Widget build(BuildContext context) {
-    List<String> tiketImages = [
-      "assets/images/Tiket masuk.png",
-      "assets/images/kolam dewasa.png",
-      "assets/images/kolam anak-anak.png"
-    ];
-    List<ListItem> items = [
-      ListItem(name: "Tiket masuk", harga: 15000),
-      ListItem(name: "Tiket kolam dewasa", harga: 10000),
-      ListItem(name: "Tiket kolam anak-anak", harga: 15000),
-    ];
+    // List<String> tiketImages = [
+    //   "assets/images/Tiket masuk.png",
+    //   "assets/images/kolam dewasa.png",
+    //   "assets/images/kolam anak-anak.png"
+    // ];
+    // List<ListItem> items = [
+    //   ListItem(name: "Tiket masuk", harga: 15000),
+    //   ListItem(name: "Tiket kolam dewasa", harga: 10000),
+    //   ListItem(name: "Tiket kolam anak-anak", harga: 15000),
+    // ];
 
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
@@ -53,14 +64,28 @@ class _BeliTiketState extends State<BeliTiket> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: 3,
-                    itemBuilder: (BuildContext context, int index) {
-                      ListItem item = items[index];
-                      return ItemWidget(item: item, image: tiketImages[index]);
-                    })
+                Consumer<TiketController>(
+                  builder: (context, value, child) {
+                    final con =
+                        Provider.of<TiketController>(context, listen: false);
+                    print(con.dataTiketWisata.length);
+                    return ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: con.dataTiketWisata.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final item = con.dataTiketWisata[index];
+
+                          return ItemWidget(
+                            index: index,
+                            name: item.nama,
+                            image: item.gambar,
+                            harga: item.hargaTiket.toString(),
+                            counter: item.counter,
+                          );
+                        });
+                  },
+                )
               ],
             ),
           ),
@@ -68,11 +93,7 @@ class _BeliTiketState extends State<BeliTiket> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
-          onPressed: () {
-            debugPrint(items[0].counter.toString());
-            debugPrint(items[1].counter.toString());
-            debugPrint(items[2].counter.toString());
-          },
+          onPressed: () {},
           label: const Text(
             "Lanjut Bayar",
             style: TextStyle(color: Colors.white),
@@ -90,10 +111,19 @@ class ListItem {
 }
 
 class ItemWidget extends StatefulWidget {
-  final ListItem item;
-  final String image;
+  int index;
 
-  ItemWidget({required this.item, required this.image});
+  final String name;
+  final String image;
+  final String harga;
+  int counter;
+
+  ItemWidget(
+      {required this.index,
+      required this.name,
+      required this.image,
+      required this.harga,
+      required this.counter});
 
   @override
   _ItemWidgetState createState() => _ItemWidgetState();
@@ -102,6 +132,8 @@ class ItemWidget extends StatefulWidget {
 class _ItemWidgetState extends State<ItemWidget> {
   @override
   Widget build(BuildContext context) {
+    final con = Provider.of<TiketController>(context, listen: false);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       height: 200,
@@ -111,7 +143,7 @@ class _ItemWidgetState extends State<ItemWidget> {
             child: Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(widget.image),
+                  image: NetworkImage(widget.image),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.circular(10),
@@ -131,8 +163,8 @@ class _ItemWidgetState extends State<ItemWidget> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.item.name),
-                      Text(widget.item.harga.toString()),
+                      Text(widget.name),
+                      Text(widget.harga.toString()),
                     ],
                   ),
                 )
@@ -148,17 +180,21 @@ class _ItemWidgetState extends State<ItemWidget> {
               children: [
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        widget.item.counter += 1;
-                      });
+                      con.updateCounterForItem(
+                          widget.index, widget.counter + 1);
+                      setState(() {});
+                      con.addToCart(con.dataTiketWisata[widget.index]);
                     },
                     icon: Icon(Icons.add_circle_outline)),
-                Text(widget.item.counter.toString()),
+                Text(con.dataTiketWisata[widget.index].counter.toString()),
                 IconButton(
                     onPressed: () {
                       setState(() {
-                        if (widget.item.counter > 0) {
-                          widget.item.counter -= 1;
+                        if (widget.counter > 0) {
+                          con.updateCounterForItem(
+                              widget.index, widget.counter - 1);
+                          setState(() {});
+                          con.removeFromCart(con.dataTiketWisata[widget.index]);
                         }
                       });
                     },

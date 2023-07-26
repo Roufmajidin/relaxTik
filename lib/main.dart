@@ -13,6 +13,7 @@ import 'dart:io';
 import 'package:relax_tik/view/beli_tiket.dart';
 import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/landing_page.dart';
+import 'package:relax_tik/view_model/tiket-controller.dart';
 
 import 'package:xendit/xendit.dart';
 
@@ -68,6 +69,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ControllerProvider()),
         ChangeNotifierProvider(create: (_) => LoginController()),
+        ChangeNotifierProvider(create: (_) => TiketController()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
