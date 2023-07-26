@@ -10,6 +10,9 @@ import 'package:relax_tik/view_model/controller_provider.dart';
 import 'package:relax_tik/view_model/login_controller.dart';
 import 'dart:convert';
 import 'dart:io';
+import 'package:relax_tik/view/beli_tiket.dart';
+import 'package:relax_tik/view/dashboard.dart';
+import 'package:relax_tik/view/landing_page.dart';
 
 import 'package:xendit/xendit.dart';
 
@@ -68,7 +71,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: user != null ? AturUlangKataSandi() : Login(),
+        home: user != null ? Dashboard() : Login(),
       ),
     );
   }
