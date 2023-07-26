@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/view/detail_transaksi.dart';
 
 import '../view_model/tiket-controller.dart';
 
@@ -93,7 +94,16 @@ class _BeliTiketState extends State<BeliTiket> {
       ),
       floatingActionButton: FloatingActionButton.extended(
           backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) {
+                  return DetailTransaksi();
+                },
+              ),
+            );
+          },
           label: const Text(
             "Lanjut Bayar",
             style: TextStyle(color: Colors.white),
@@ -180,8 +190,8 @@ class _ItemWidgetState extends State<ItemWidget> {
               children: [
                 IconButton(
                     onPressed: () {
-                      con.updateCounterForItem(
-                          widget.index, widget.counter + 1);
+                      // con.updateCounterForItem(
+                      //     widget.index, widget.counter + 1);
                       setState(() {});
                       con.addToCart(con.dataTiketWisata[widget.index]);
                     },
@@ -191,8 +201,6 @@ class _ItemWidgetState extends State<ItemWidget> {
                     onPressed: () {
                       setState(() {
                         if (widget.counter > 0) {
-                          con.updateCounterForItem(
-                              widget.index, widget.counter - 1);
                           setState(() {});
                           con.removeFromCart(con.dataTiketWisata[widget.index]);
                         }

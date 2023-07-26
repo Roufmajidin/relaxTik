@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:relax_tik/view_model/tiket-controller.dart';
 
 class DetailTransaksi extends StatefulWidget {
   const DetailTransaksi({super.key});
@@ -10,6 +12,8 @@ class DetailTransaksi extends StatefulWidget {
 class _DetailTransaksiState extends State<DetailTransaksi> {
   @override
   Widget build(BuildContext context) {
+    final con = Provider.of<TiketController>(context, listen: false);
+
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -62,22 +66,24 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: 3,
+                        itemCount: con.cartItems.length,
                         itemBuilder: (context, index) {
+                          final item = con.cartItems[index];
                           return Container(
                             margin: const EdgeInsets.only(bottom: 8),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  "Nama Paket",
+                                  item.nama,
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600),
                                 ),
                                 Text(
-                                  "2 * 15000",
+                                  "${item.counter} * ${item.hargaTiket}",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w500),
@@ -100,7 +106,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
                             Text(
-                              "30000",
+                              con.totalHarga.toString(),
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w500),
                             ),

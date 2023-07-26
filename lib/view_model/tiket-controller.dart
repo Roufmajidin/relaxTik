@@ -10,6 +10,7 @@ enum RequestState { empty, loading, loaded, error }
 class TiketController extends ChangeNotifier {
   List<TiketModel> dataTiketWisata = [];
   List<TiketModel> _cartItems = [];
+  List nama = [];
 
   List<TiketModel> get cartItems => _cartItems;
 
@@ -44,30 +45,36 @@ class TiketController extends ChangeNotifier {
   }
 
   void addToCart(TiketModel item) {
-    _cartItems.add(item);
+    if (nama.contains(item.nama)) {
+      item.counter += 1;
+    } else {
+      nama.add(item.nama);
+      item.counter += 1;
+      _cartItems.add(item);
+    }
     notifyListeners();
     log("total adalah ${totalHarga}");
-    log(cartItems.length.toString());
-    for (var element in cartItems) {
-      log(element.nama);
-    }
+    log(_cartItems.length.toString());
+    // for (var element in cartItems) {
+    //   log(element.nama);
+    // }
   }
 
   void removeFromCart(TiketModel item) {
-    _cartItems.remove(item);
+    if (nama.contains(item.nama)) {
+      item.counter -= 1;
+    } else {
+      nama.add(item.nama);
+      item.counter -= 1;
+      // _cartItems.add(item);
+      // _cartItems.remove(item);
+    }
     notifyListeners();
 
     log(cartItems.length.toString());
     log("total adalah ${totalHarga}");
     for (var element in cartItems) {
       log(element.nama);
-    }
-  }
-
-  void updateCounterForItem(int index, int newCounter) {
-    if (index >= 0 && index < dataTiketWisata.length) {
-      dataTiketWisata[index].counter = newCounter;
-      notifyListeners();
     }
   }
 
@@ -76,6 +83,7 @@ class TiketController extends ChangeNotifier {
     for (var item in _cartItems) {
       total += item.hargaTiket * item.counter;
     }
+
     return total;
   }
 }
