@@ -69,6 +69,7 @@ class TiketController extends ChangeNotifier {
       // _cartItems.add(item);
       // _cartItems.remove(item);
     }
+    item.counter == 0 ? _cartItems.remove(item) : null;
     notifyListeners();
 
     log(cartItems.length.toString());
