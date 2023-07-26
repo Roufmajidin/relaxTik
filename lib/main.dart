@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:relax_tik/view/beli_tiket.dart';
 import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/landing_page.dart';
 
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const LandingPage(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         '/dashboard': (context) => const Dashboard(),
+        '/beli_tiket': (context) => const BeliTiket(),
       },
     );
   }

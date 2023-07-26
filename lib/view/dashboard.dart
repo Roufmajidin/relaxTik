@@ -141,12 +141,17 @@ class Beranda extends StatelessWidget {
                     MyButton(
                       icon: Image.asset('assets/icons/tickets.png'),
                       label: 'Beli Tiket',
+                      onTap: () {
+                        Navigator.pushNamed(context, '/beli_tiket');
+                      },
                     ),
                     const SizedBox(width: 70),
                     MyButton(
-                      icon: Image.asset('assets/icons/more.png'),
-                      label: 'Lainnya',
-                    ),
+                        icon: Image.asset('assets/icons/more.png'),
+                        label: 'Lainnya',
+                        onTap: () {
+                          Navigator.pushNamed(context, '/beli_tiket');
+                        }),
                   ],
                 ),
               ),
@@ -204,12 +209,13 @@ class Beranda extends StatelessWidget {
 }
 
 class MyButton extends StatelessWidget {
-  const MyButton({
+  MyButton({
     super.key,
     required this.icon,
     required this.label,
+    this.onTap,
   });
-
+  final void Function()? onTap;
   final Widget icon;
   final String label;
 
@@ -219,7 +225,7 @@ class MyButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: () {},
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(10.0),
             height: 50,
