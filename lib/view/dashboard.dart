@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:relax_tik/view/beli_tiket.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -142,7 +143,14 @@ class Beranda extends StatelessWidget {
                       icon: Image.asset('assets/icons/tickets.png'),
                       label: 'Beli Tiket',
                       onTap: () {
-                        Navigator.pushNamed(context, '/beli_tiket');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return BeliTiket();
+                            },
+                          ),
+                        );
                       },
                     ),
                     const SizedBox(width: 70),
@@ -150,7 +158,14 @@ class Beranda extends StatelessWidget {
                         icon: Image.asset('assets/icons/more.png'),
                         label: 'Lainnya',
                         onTap: () {
-                          Navigator.pushNamed(context, '/beli_tiket');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return BeliTiket();
+                              },
+                            ),
+                          );
                         }),
                   ],
                 ),
