@@ -2,11 +2,12 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
+import 'package:relax_tik/model/Pesanan.dart';
 
 class APIEmail {
+  static const String baseUrl = 'https://fa49-103-191-218-82.ngrok-free.app';
   Future sendOTP(email, otp) async {
     log(email);
-
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
     const servisId = 'service_gyix20h';
     const userId = 'kgBftW4780LNwN4e2';
@@ -32,6 +33,23 @@ class APIEmail {
     return response.statusCode;
   }
 
+  static Future<List<Pesanan>> getRiwayat({String? email}) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/payment_histories/$email'), //class all
+    );
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final dataList = responseData;
+      log(responseData.toString());
+      print(dataList.length);
+      // return responseData;
+      print(dataList);
+      return dataList.map<Pesanan>((data) => Pesanan.fromJson(data)).toList();
+    } else {
+      throw Exception('Failed to load Booking data');
+    }
+  }
+
   static Future<dynamic> bayar(data, totalBayar) async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final User? user = _auth.currentUser;
@@ -42,13 +60,12 @@ class APIEmail {
       "description": pesanan,
       "total_amount": totalBayar
     };
-    final response = await http.post(
-        Uri.parse(
-            'https://fa49-103-191-218-82.ngrok-free.app/api/payment_histories'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(a));
+    final response =
+        await http.post(Uri.parse('$baseUrl/api/payment_histories'),
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode(a));
     print(response.body);
 
     if (response.statusCode == 200) {

@@ -9,7 +9,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../model/model_email.dart';
 
-enum RequestState { empty, loading, loaded, error }
+enum RequestStateLogin { empty, loading, loaded, error }
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final api = APIEmail();
@@ -18,8 +18,8 @@ final CollectionReference _usersCollection =
     FirebaseFirestore.instance.collection('users');
 
 class LoginController extends ChangeNotifier {
-  RequestState _loginState = RequestState.empty;
-  RequestState get loginState => _loginState;
+  RequestStateLogin _loginState = RequestStateLogin.empty;
+  RequestStateLogin get loginState => _loginState;
 
   Future<void> loginWithEmail(String email, String password) async {
     try {
@@ -42,10 +42,10 @@ class LoginController extends ChangeNotifier {
         await saveUserData(email, userData);
       }
 
-      _loginState = RequestState.loaded;
+      _loginState = RequestStateLogin.loaded;
       notifyListeners();
     } catch (e) {
-      _loginState = RequestState.error;
+      _loginState = RequestStateLogin.error;
       notifyListeners();
       print('Error saat login: $e');
     }
@@ -62,15 +62,15 @@ class LoginController extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
-      _loginState = RequestState.loading;
+      _loginState = RequestStateLogin.loading;
       notifyListeners();
 
       await _auth.signOut();
 
-      _loginState = RequestState.loaded;
+      _loginState = RequestStateLogin.loaded;
       notifyListeners();
     } catch (e) {
-      _loginState = RequestState.error;
+      _loginState = RequestStateLogin.error;
       notifyListeners();
       print('Error during logout: $e');
     }

@@ -228,8 +228,10 @@ class _LoginState extends State<Login> {
                                 await login.loginWithEmail(email, password);
 
                                 // Navigasi ke halaman beranda setelah proses login berhasil
-                                if (login.loginState != RequestState.loading &&
-                                    login.loginState != RequestState.error) {
+                                if (login.loginState !=
+                                        RequestStateLogin.loading &&
+                                    login.loginState !=
+                                        RequestStateLogin.error) {
                                   Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(

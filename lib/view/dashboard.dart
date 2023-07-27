@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/beli_tiket.dart';
 
+import '../format/converter.dart';
 import '../view_model/login_controller.dart';
+import '../view_model/tiket-controller.dart';
 import 'login.dart';
 
 class Dashboard extends StatefulWidget {
@@ -27,7 +29,17 @@ class _DashboardState extends State<Dashboard> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(
+      () => Provider.of<TiketController>(context, listen: false).fetchRiwayat(),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var mediaquery = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -87,6 +99,7 @@ class Beranda extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var mediaquery = MediaQuery.of(context).size;
     return SizedBox(
       width: double.infinity,
       height: double.infinity,
@@ -196,40 +209,86 @@ class Beranda extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               Container(
-                child: ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(8),
-                    itemCount: 9,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        padding: EdgeInsets.all(20.0),
-                        height: 100,
-                        color: const Color.fromRGBO(84, 87, 84, 0.12),
-                        child: const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Anonimus",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
+                child: Consumer<TiketController>(
+                  builder: (context, cont, _) {
+                    final i = cont.pesanan;
+                    if (cont.requestState == RequestState.loading) {
+                      return SizedBox(
+                          // height: mediaquery.height,
+                          child: Center(child: CircularProgressIndicator()));
+                    }
+                    if (cont.requestState == RequestState.loaded) {
+                      if (i != null) {
+                        return ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            padding: const EdgeInsets.all(8),
+                            itemCount: cont.pesanan.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final item = Provider.of<TiketController>(context,
+                                      listen: false)
+                                  .pesanan[index];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 20),
+                                padding: EdgeInsets.all(20.0),
+                                height: 100,
+                                color: const Color.fromRGBO(84, 87, 84, 0.12),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.pemesan,
+                                          style: const TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                        Text(
+                                          DateFormatter
+                                              .formatToDDMMYYYYWithMonthName(
+                                                  item.createdAt),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ],
+                                    ),
+                                    Column(
+                                      children: [
+                                        Text(
+                                            FormatRupiah.format(double.parse(
+                                                item.totalAmount.toString())),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600)),
+                                        Text(item.status,
+                                            style: item.status == 'pending'
+                                                ? TextStyle(
+                                                    fontWeight: FontWeight.w300,
+                                                    color: Colors.red)
+                                                : TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.green)),
+                                      ],
+                                    )
+                                  ],
                                 ),
-                                Text(
-                                  "Hari/Tanggal",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            Text('Rp.     0.00',
-                                style: TextStyle(fontWeight: FontWeight.w600))
-                          ],
-                        ),
-                      );
-                    }),
+                              );
+                            });
+                      } else {
+                        return const CircularProgressIndicator();
+                      }
+                    } else if (cont.requestState == RequestState.error) {
+                      return SizedBox(
+                          height: mediaquery.height,
+                          child: Text("Error cant get Data"));
+                    }
+                    return Text("");
+                  },
+                ),
               ),
             ],
           ),

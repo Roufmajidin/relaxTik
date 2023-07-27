@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:relax_tik/model/model_email.dart';
 import 'package:relax_tik/model/tiket_model.dart';
+
+import '../model/Pesanan.dart';
 
 enum RequestState { empty, loading, loaded, error }
 
@@ -15,7 +17,9 @@ class TiketController extends ChangeNotifier {
   List<TiketModel> get cartItems => _cartItems;
   List nama = [];
   String dataLink = '';
-
+// get data pesanan user
+  List<Pesanan> _pesanan = [];
+  List<Pesanan> get pesanan => _pesanan;
   RequestState _requestState = RequestState.empty;
   RequestState get requestState => _requestState;
   String _message = '';
@@ -44,6 +48,27 @@ class TiketController extends ChangeNotifier {
       notifyListeners();
     });
     notifyListeners();
+  }
+
+  Future<void> fetchRiwayat() async {
+    print("ok");
+
+    _requestState = RequestState.loading;
+    notifyListeners();
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final User? user = _auth.currentUser;
+    try {
+      _pesanan = await APIEmail.getRiwayat(email: user?.email);
+      print(pesanan.length);
+      _requestState = RequestState.loaded;
+
+      notifyListeners();
+    } catch (e) {
+      _requestState = RequestState.error;
+      notifyListeners();
+      print(e);
+      throw "Cant get data";
+    }
   }
 
   void addToCart(TiketModel item) {
