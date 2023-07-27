@@ -8,7 +8,7 @@ import 'package:relax_tik/view_model/tiket-controller.dart';
 import '../model/tiket_model.dart';
 
 class DetailTransaksi extends StatefulWidget {
-  final String statusPage;
+  var statusPage;
 
   DetailTransaksi({super.key, required this.statusPage});
 
@@ -19,6 +19,7 @@ class DetailTransaksi extends StatefulWidget {
 class _DetailTransaksiState extends State<DetailTransaksi> {
   @override
   Widget build(BuildContext context) {
+    final conti = Provider.of<TiketController>(context, listen: false);
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -118,15 +119,13 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Consumer<TiketController>(
-                              builder: (context, cont, _) => Text(
-                                widget.statusPage == 'pending_bayar'
-                                    ? cont.tot.toString()
-                                    : cont.totalHarga.toString(),
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500),
-                              ),
-                            ),
+                            Text(
+                              widget.statusPage == 'pending_bayar'
+                                  ? conti.tot.toString()
+                                  : conti.totalHarga.toString(),
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            )
                           ],
                         ),
                       ),
@@ -141,23 +140,23 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
         onPressed: () async {
-          final con = Provider.of<TiketController>(context, listen: false);
+          // final con = Provider.of<TiketController>(context, listen: false);
           List<Map<String, dynamic>> jsonList =
-              con.cartItems.map((item) => item.toJson()).toList();
+              conti.cartItems.map((item) => item.toJson()).toList();
           Map<String, dynamic> jsonObject = {
             'pesanan': jsonList,
           };
           print(jsonObject);
 
           log("masuk");
-          log(con.dataLink);
+          log(conti.dataLink);
 
           if (widget.statusPage == 'baru_bayar') {
-            con.bayar(jsonList);
+            conti.bayar(jsonList);
           } else {
-            log(con.dataLink);
+            log(conti.dataLink);
           }
-          _showAlertDialog(context, con);
+          _showAlertDialog(context, conti);
         },
         label: const Padding(
           padding: EdgeInsets.all(25),

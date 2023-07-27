@@ -67,9 +67,7 @@ class _BeliTiketState extends State<BeliTiket> {
                 ),
                 const SizedBox(height: 30),
                 Consumer<TiketController>(
-                  builder: (context, value, child) {
-                    final con =
-                        Provider.of<TiketController>(context, listen: false);
+                  builder: (context, con, _) {
                     print(con.dataTiketWisata.length);
                     return ListView.builder(
                         physics: const NeverScrollableScrollPhysics(),
@@ -97,13 +95,10 @@ class _BeliTiketState extends State<BeliTiket> {
           backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
           onPressed: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) {
-                  return DetailTransaksi(statusPage: "baru_bayar");
-                },
-              ),
-            );
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        DetailTransaksi(statusPage: "baru_bayar")));
           },
           label: const Text(
             "Lanjut Bayar",
@@ -193,19 +188,18 @@ class _ItemWidgetState extends State<ItemWidget> {
                     onPressed: () {
                       // con.updateCounterForItem(
                       //     widget.index, widget.counter + 1);
-                      // setState(() {});
                       con.addToCart(con.dataTiketWisata[widget.index]);
                     },
                     icon: Icon(Icons.add_circle_outline)),
                 Text(con.dataTiketWisata[widget.index].counter.toString()),
                 IconButton(
                     onPressed: () {
-                      setState(() {
-                        if (widget.counter > 0) {
-                          // setState(() {});
-                          con.removeFromCart(con.dataTiketWisata[widget.index]);
-                        }
-                      });
+                      // setState(() {
+                      if (widget.counter > 0) {
+                        // setState(() {});
+                        con.removeFromCart(con.dataTiketWisata[widget.index]);
+                      }
+                      // });
                     },
                     icon: Icon(Icons.remove_circle_outline)),
               ],

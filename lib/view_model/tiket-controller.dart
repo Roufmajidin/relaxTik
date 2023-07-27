@@ -80,6 +80,7 @@ class TiketController extends ChangeNotifier {
       nama.add(item.nama);
       item.counter += 1;
       _cartItems.add(item);
+      notifyListeners();
     }
     log("total adalah ${totalHarga}");
     log(_cartItems.length.toString());
@@ -100,7 +101,7 @@ class TiketController extends ChangeNotifier {
       // _cartItems.remove(item);
       notifyListeners();
     }
-    item.counter == 0 ? _cartItems.remove(item) : null;
+    item.counter == 0 ? _cartItems.remove(item) : 0;
     notifyListeners();
 
     log(cartItems.length.toString());
@@ -141,12 +142,14 @@ class TiketController extends ChangeNotifier {
     await Future.delayed(Duration(seconds: 2));
 
     fetchRiwayat();
+    fetchTiket();
     // _cartItems = [];
     notifyListeners();
   }
 
   Future<void> refreshCart() async {
     // await Future.delayed(Duration(seconds: 2));
+    fetchTiket();
 
     _cartItems = [];
     notifyListeners();
@@ -163,21 +166,20 @@ class TiketController extends ChangeNotifier {
       for (var element in pesanan.pesanan) {
         log('nama pesanan : ${element.nama}');
         log('nama pesanan : ${element.counter}');
-        // Buat list baru untuk menampung data tiket baru
 
         TiketModel tiket = TiketModel(
-          docId:
-              "", // Provide the docId value here, you can get it from somewhere else
+          docId: "",
           nama: element.nama,
-          hargaTiket: element
-              .hargaTiket, // Ubah key sesuai dengan model TiketModel Anda
-          gambar:
-              element.gambar, // Ubah key sesuai dengan model TiketModel Anda
+          hargaTiket: element.hargaTiket,
+          gambar: element.gambar,
           counter: element.counter,
         );
+        notifyListeners();
 
-        newCartItems.add(tiket); // Tambahkan tiket ke list baru
+        newCartItems.add(tiket);
+        notifyListeners();
       }
+      notifyListeners();
 
       _cartItemsPending =
           newCartItems; // Timpa _cartItemsPending dengan list baru

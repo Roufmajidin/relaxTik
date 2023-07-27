@@ -38,9 +38,6 @@ class _DashboardState extends State<Dashboard> {
     Future.microtask(
       () => Provider.of<TiketController>(context, listen: false).fetchRiwayat(),
     );
-    // Future.microtask(
-    //   () => Provider.of<TiketController>(context, listen: false).refreshCart(),
-    // );
   }
 
   @override
