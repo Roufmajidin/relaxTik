@@ -13,21 +13,23 @@ enum RequestState { empty, loading, loaded, error }
 
 class TiketController extends ChangeNotifier {
   List<TiketModel> dataTiketWisata = [];
+  List<TiketModel> _cartItemsPending = [];
+  List<TiketModel> get cartItemsPending => _cartItemsPending;
+
   List<TiketModel> _cartItems = [];
+
   List<TiketModel> get cartItems => _cartItems;
   List nama = [];
   String dataLink = '';
 // get data pesanan user
-  List<Pesanan> _pesanan = [];
-  List<Pesanan> get pesanan => _pesanan;
+  List<DataPesanan> _pesanan = [];
+  List<DataPesanan> get pesanan => _pesanan;
   RequestState _requestState = RequestState.empty;
   RequestState get requestState => _requestState;
-  String _message = '';
-  String posisiKader = '';
-  String get message => _message;
-  String gambarKader = '';
+  int tot = 0;
   String gambarKaderUpdate = "";
-
+  List<PesananElement> _pesananPending = [];
+  List<PesananElement> get pesananPending => _pesananPending;
   Future fetchTiket() async {
     // _requestState = RequestState.loading;
     notifyListeners();
@@ -74,14 +76,11 @@ class TiketController extends ChangeNotifier {
   void addToCart(TiketModel item) {
     if (nama.contains(item.nama)) {
       item.counter += 1;
-      notifyListeners();
     } else {
       nama.add(item.nama);
       item.counter += 1;
       _cartItems.add(item);
-      notifyListeners();
     }
-    notifyListeners();
     log("total adalah ${totalHarga}");
     log(_cartItems.length.toString());
     // for (var element in cartItems) {
@@ -99,6 +98,7 @@ class TiketController extends ChangeNotifier {
       item.counter -= 1;
       // _cartItems.add(item);
       // _cartItems.remove(item);
+      notifyListeners();
     }
     item.counter == 0 ? _cartItems.remove(item) : null;
     notifyListeners();
@@ -115,7 +115,9 @@ class TiketController extends ChangeNotifier {
     int total = 0;
     for (var item in _cartItems) {
       total += item.hargaTiket * item.counter;
+      notifyListeners();
     }
+    notifyListeners();
 
     return total;
   }
@@ -133,5 +135,61 @@ class TiketController extends ChangeNotifier {
       print(e);
     }
     notifyListeners();
+  }
+
+  Future<void> reloadHalaman() async {
+    await Future.delayed(Duration(seconds: 2));
+
+    fetchRiwayat();
+    // _cartItems = [];
+    notifyListeners();
+  }
+
+  Future<void> refreshCart() async {
+    // await Future.delayed(Duration(seconds: 2));
+
+    _cartItems = [];
+    notifyListeners();
+  }
+
+  Future<void> getPendingPesanan({int? id}) async {
+    try {
+      var pesanan = await APIEmail.getPendingPesanan(id: id);
+
+      // Now you can access the pesanan field
+
+      log('ini adalah ${pesanan.checkoutLink}');
+      List<TiketModel> newCartItems = [];
+      for (var element in pesanan.pesanan) {
+        log('nama pesanan : ${element.nama}');
+        log('nama pesanan : ${element.counter}');
+        // Buat list baru untuk menampung data tiket baru
+
+        TiketModel tiket = TiketModel(
+          docId:
+              "", // Provide the docId value here, you can get it from somewhere else
+          nama: element.nama,
+          hargaTiket: element
+              .hargaTiket, // Ubah key sesuai dengan model TiketModel Anda
+          gambar:
+              element.gambar, // Ubah key sesuai dengan model TiketModel Anda
+          counter: element.counter,
+        );
+
+        newCartItems.add(tiket); // Tambahkan tiket ke list baru
+      }
+
+      _cartItemsPending =
+          newCartItems; // Timpa _cartItemsPending dengan list baru
+      dataLink = pesanan.checkoutLink;
+      print('harga : ${pesanan.totalAmount}');
+      int intValue = double.parse(pesanan.totalAmount).toInt();
+      print(intValue);
+      tot = intValue;
+      notifyListeners();
+    } catch (e) {
+      print(e);
+      throw "Can't get by Id";
+    }
   }
 }

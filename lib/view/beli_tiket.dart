@@ -100,7 +100,7 @@ class _BeliTiketState extends State<BeliTiket> {
               context,
               MaterialPageRoute(
                 builder: (context) {
-                  return DetailTransaksi();
+                  return DetailTransaksi(statusPage: "baru_bayar");
                 },
               ),
             );
@@ -193,7 +193,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                     onPressed: () {
                       // con.updateCounterForItem(
                       //     widget.index, widget.counter + 1);
-                      setState(() {});
+                      // setState(() {});
                       con.addToCart(con.dataTiketWisata[widget.index]);
                     },
                     icon: Icon(Icons.add_circle_outline)),
@@ -202,7 +202,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                     onPressed: () {
                       setState(() {
                         if (widget.counter > 0) {
-                          setState(() {});
+                          // setState(() {});
                           con.removeFromCart(con.dataTiketWisata[widget.index]);
                         }
                       });

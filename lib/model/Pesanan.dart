@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-List<Pesanan> pesananFromJson(String str) =>
-    List<Pesanan>.from(json.decode(str).map((x) => Pesanan.fromJson(x)));
+List<DataPesanan> pesananFromJson(String str) => List<DataPesanan>.from(
+    json.decode(str).map((x) => DataPesanan.fromJson(x)));
 
-String pesananToJson(List<Pesanan> data) =>
+String pesananToJson(List<DataPesanan> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class Pesanan {
+class DataPesanan {
   int id;
   String pemesan;
   String status;
@@ -17,7 +17,7 @@ class Pesanan {
   DateTime createdAt;
   DateTime updatedAt;
 
-  Pesanan({
+  DataPesanan({
     required this.id,
     required this.pemesan,
     required this.status,
@@ -29,7 +29,7 @@ class Pesanan {
     required this.updatedAt,
   });
 
-  factory Pesanan.fromJson(Map<String, dynamic> json) => Pesanan(
+  factory DataPesanan.fromJson(Map<String, dynamic> json) => DataPesanan(
         id: json["id"],
         pemesan: json["pemesan"],
         status: json["status"],

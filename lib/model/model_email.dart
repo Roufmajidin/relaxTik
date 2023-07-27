@@ -33,7 +33,7 @@ class APIEmail {
     return response.statusCode;
   }
 
-  static Future<List<Pesanan>> getRiwayat({String? email}) async {
+  static Future<List<DataPesanan>> getRiwayat({String? email}) async {
     final response = await http.get(
       Uri.parse('$baseUrl/payment_histories/$email'), //class all
     );
@@ -44,7 +44,9 @@ class APIEmail {
       print(dataList.length);
       // return responseData;
       print(dataList);
-      return dataList.map<Pesanan>((data) => Pesanan.fromJson(data)).toList();
+      return dataList
+          .map<DataPesanan>((data) => DataPesanan.fromJson(data))
+          .toList();
     } else {
       throw Exception('Failed to load Booking data');
     }
@@ -73,6 +75,41 @@ class APIEmail {
     } else {
       print(response.statusCode);
       throw "Can't pay the haha";
+    }
+  }
+
+  static Future<DataPesanan> getPendingPesanan({int? id}) async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/api/payment_histories/getById/$id'));
+
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body) as List<dynamic>;
+
+      if (responseData.isNotEmpty) {
+        final data = responseData[0]; // Take the first element from the list
+
+        final pesananList = (data['pesanan'] as List<dynamic>)
+            .map<PesananElement>((item) => PesananElement.fromJson(item))
+            .toList();
+
+        final dataPesanan = DataPesanan(
+          id: data['id'],
+          pemesan: data['pemesan'],
+          status: data['status'],
+          pesanan: pesananList,
+          orderId: data['order_id'],
+          totalAmount: data['total_amount'],
+          checkoutLink: data['checkout_link'],
+          createdAt: DateTime.parse(data['created_at']),
+          updatedAt: DateTime.parse(data['updated_at']),
+        );
+
+        return dataPesanan;
+      } else {
+        throw Exception('Data not found');
+      }
+    } else {
+      throw Exception('Failed to load Booking data');
     }
   }
 }

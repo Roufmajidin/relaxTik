@@ -1,14 +1,16 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/staging.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
+import '../model/tiket_model.dart';
+
 class DetailTransaksi extends StatefulWidget {
-  const DetailTransaksi({super.key});
+  final String statusPage;
+
+  DetailTransaksi({super.key, required this.statusPage});
 
   @override
   State<DetailTransaksi> createState() => _DetailTransaksiState();
@@ -16,26 +18,7 @@ class DetailTransaksi extends StatefulWidget {
 
 class _DetailTransaksiState extends State<DetailTransaksi> {
   @override
-  void initState() {
-    super.initState();
-    final con = Provider.of<TiketController>(context, listen: false);
-    List<Map<String, dynamic>> jsonList =
-        con.cartItems.map((item) => item.toJson()).toList();
-    Map<String, dynamic> jsonObject = {
-      'pesanan': jsonList,
-    };
-    print(jsonObject);
-
-    log("masuk");
-    Future.microtask(
-      () =>
-          Provider.of<TiketController>(context, listen: false).bayar(jsonList),
-    );
-  }
-
   Widget build(BuildContext context) {
-    final con = Provider.of<TiketController>(context, listen: false);
-
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -87,31 +70,39 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      ListView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: con.cartItems.length,
-                        itemBuilder: (context, index) {
-                          final item = con.cartItems[index];
-                          return Container(
-                            margin: const EdgeInsets.only(bottom: 8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  item.nama,
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600),
+                      Consumer<TiketController>(
+                        builder: (context, cont, child) {
+                          final items = widget.statusPage == 'pending_bayar'
+                              ? cont.cartItemsPending
+                              : cont.cartItems;
+                          return ListView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: items.length,
+                            itemBuilder: (context, index) {
+                              final item = items[index];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      item.nama,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    Text(
+                                      "${item.counter} * ${item.hargaTiket}",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  ],
                                 ),
-                                Text(
-                                  "${item.counter} * ${item.hargaTiket}",
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           );
                         },
                       ),
@@ -127,10 +118,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Text(
-                              con.totalHarga.toString(),
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            Consumer<TiketController>(
+                              builder: (context, cont, _) => Text(
+                                widget.statusPage == 'pending_bayar'
+                                    ? cont.tot.toString()
+                                    : cont.totalHarga.toString(),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
                             ),
                           ],
                         ),
@@ -145,14 +140,24 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
-        onPressed: () {
+        onPressed: () async {
           final con = Provider.of<TiketController>(context, listen: false);
+          List<Map<String, dynamic>> jsonList =
+              con.cartItems.map((item) => item.toJson()).toList();
+          Map<String, dynamic> jsonObject = {
+            'pesanan': jsonList,
+          };
+          print(jsonObject);
 
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) {
-              return WebViewExample(url: con.dataLink);
-            },
-          ));
+          log("masuk");
+          log(con.dataLink);
+
+          if (widget.statusPage == 'baru_bayar') {
+            con.bayar(jsonList);
+          } else {
+            log(con.dataLink);
+          }
+          _showAlertDialog(context, con);
         },
         label: const Padding(
           padding: EdgeInsets.all(25),
@@ -164,6 +169,45 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
         // backgroundColor: Colors.pink,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  void _showAlertDialog(BuildContext context, con) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pemberitahuan'),
+          content: Text('Lanjut Ke pembayaran ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return WebViewExample(url: con.dataLink);
+                  },
+                ));
+                // con.itemCart = [];
+              },
+              style: TextButton.styleFrom(
+                primary: Colors.white, // Text color
+                backgroundColor: Colors.blue, // Button background color
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10.0), // Button border radius
+                ),
+              ),
+              child: Text('Ya'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
