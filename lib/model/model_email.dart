@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 
 class APIEmail {
@@ -32,15 +33,18 @@ class APIEmail {
   }
 
   static Future<dynamic> bayar(data, totalBayar) async {
-    print("OK");
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final User? user = _auth.currentUser;
+    print('user : ${user!.email}');
+    String pesanan = jsonEncode(data);
     final a = {
-      "payer_email": "halo@mail.com",
-      "description": "Membeli Titit",
+      "payer_email": user.email,
+      "description": pesanan,
       "total_amount": totalBayar
     };
     final response = await http.post(
         Uri.parse(
-            'https://18e9-103-191-218-82.ngrok-free.app/api/payment_histories'),
+            'https://fa49-103-191-218-82.ngrok-free.app/api/payment_histories'),
         headers: {
           'Content-Type': 'application/json',
         },

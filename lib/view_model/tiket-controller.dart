@@ -12,18 +12,18 @@ enum RequestState { empty, loading, loaded, error }
 class TiketController extends ChangeNotifier {
   List<TiketModel> dataTiketWisata = [];
   List<TiketModel> _cartItems = [];
+  List<TiketModel> get cartItems => _cartItems;
   List nama = [];
   String dataLink = '';
-  List<TiketModel> get cartItems => _cartItems;
 
   RequestState _requestState = RequestState.empty;
   RequestState get requestState => _requestState;
-
   String _message = '';
   String posisiKader = '';
   String get message => _message;
   String gambarKader = '';
   String gambarKaderUpdate = "";
+
   Future fetchTiket() async {
     // _requestState = RequestState.loading;
     notifyListeners();
@@ -49,10 +49,12 @@ class TiketController extends ChangeNotifier {
   void addToCart(TiketModel item) {
     if (nama.contains(item.nama)) {
       item.counter += 1;
+      notifyListeners();
     } else {
       nama.add(item.nama);
       item.counter += 1;
       _cartItems.add(item);
+      notifyListeners();
     }
     notifyListeners();
     log("total adalah ${totalHarga}");
@@ -60,11 +62,13 @@ class TiketController extends ChangeNotifier {
     // for (var element in cartItems) {
     //   log(element.nama);
     // }
+    notifyListeners();
   }
 
   void removeFromCart(TiketModel item) {
     if (nama.contains(item.nama)) {
       item.counter -= 1;
+      notifyListeners();
     } else {
       nama.add(item.nama);
       item.counter -= 1;
@@ -79,6 +83,7 @@ class TiketController extends ChangeNotifier {
     for (var element in cartItems) {
       log(element.nama);
     }
+    notifyListeners();
   }
 
   int get totalHarga {

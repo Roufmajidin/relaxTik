@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:relax_tik/view/beli_tiket.dart';
+
+import '../view_model/login_controller.dart';
+import 'login.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -32,9 +36,21 @@ class _DashboardState extends State<Dashboard> {
         title: Center(
             child: Text(_widgetOptions.elementAt(_selectedIndex)['judul'])),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Image.asset('assets/images/logo.png'),
+          InkWell(
+            onTap: () async {
+              print("logouted");
+              await Provider.of<LoginController>(context, listen: false)
+                  .logout();
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Login()),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Image.asset('assets/images/logo.png'),
+            ),
           )
         ],
       ),

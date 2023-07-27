@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/staging.dart';
@@ -17,10 +19,17 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
   void initState() {
     super.initState();
     final con = Provider.of<TiketController>(context, listen: false);
+    List<Map<String, dynamic>> jsonList =
+        con.cartItems.map((item) => item.toJson()).toList();
+    Map<String, dynamic> jsonObject = {
+      'pesanan': jsonList,
+    };
+    print(jsonObject);
+
     log("masuk");
     Future.microtask(
-      () => Provider.of<TiketController>(context, listen: false)
-          .bayar(con.cartItems),
+      () =>
+          Provider.of<TiketController>(context, listen: false).bayar(jsonList),
     );
   }
 

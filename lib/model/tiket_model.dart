@@ -34,4 +34,13 @@ class TiketModel {
       'counter': counter,
     };
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'nama': nama,
+      'harga_tiket': hargaTiket,
+      'gambar': gambar,
+      'counter': counter,
+    };
+  }
 }

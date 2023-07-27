@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/atur_ulang.dart';
+import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/kata_sandi_baru.dart';
 import 'package:relax_tik/view/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -233,7 +234,7 @@ class _LoginState extends State<Login> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) =>
-                                            AturUlangKataSandi()), // Ganti dengan halaman beranda yang sesuai
+                                            Dashboard()), // Ganti dengan halaman beranda yang sesuai
                                   );
                                 }
                               }
