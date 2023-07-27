@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/view/staging.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
 class DetailTransaksi extends StatefulWidget {
@@ -11,6 +14,16 @@ class DetailTransaksi extends StatefulWidget {
 
 class _DetailTransaksiState extends State<DetailTransaksi> {
   @override
+  void initState() {
+    super.initState();
+    final con = Provider.of<TiketController>(context, listen: false);
+    log("masuk");
+    Future.microtask(
+      () => Provider.of<TiketController>(context, listen: false)
+          .bayar(con.cartItems),
+    );
+  }
+
   Widget build(BuildContext context) {
     final con = Provider.of<TiketController>(context, listen: false);
 
@@ -124,8 +137,13 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
         onPressed: () {
-          // Add your onPressed code here!
-          Navigator.pushNamed(context, '/dashboard');
+          final con = Provider.of<TiketController>(context, listen: false);
+
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) {
+              return WebViewExample(url: con.dataLink);
+            },
+          ));
         },
         label: const Padding(
           padding: EdgeInsets.all(25),

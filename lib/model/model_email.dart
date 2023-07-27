@@ -30,4 +30,28 @@ class APIEmail {
     print(response);
     return response.statusCode;
   }
+
+  static Future<dynamic> bayar(data, totalBayar) async {
+    print("OK");
+    final a = {
+      "payer_email": "halo@mail.com",
+      "description": "Membeli Titit",
+      "total_amount": totalBayar
+    };
+    final response = await http.post(
+        Uri.parse(
+            'https://18e9-103-191-218-82.ngrok-free.app/api/payment_histories'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(a));
+    print(response.body);
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      print(response.statusCode);
+      throw "Can't pay the haha";
+    }
+  }
 }

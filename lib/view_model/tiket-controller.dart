@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:relax_tik/model/model_email.dart';
 import 'package:relax_tik/model/tiket_model.dart';
 
 enum RequestState { empty, loading, loaded, error }
@@ -11,7 +13,7 @@ class TiketController extends ChangeNotifier {
   List<TiketModel> dataTiketWisata = [];
   List<TiketModel> _cartItems = [];
   List nama = [];
-
+  String dataLink = '';
   List<TiketModel> get cartItems => _cartItems;
 
   RequestState _requestState = RequestState.empty;
@@ -86,5 +88,20 @@ class TiketController extends ChangeNotifier {
     }
 
     return total;
+  }
+
+  Future<void> bayar(cart) async {
+    try {
+      final result = await APIEmail.bayar(cart, totalHarga);
+      Map<String, dynamic> parsedData = jsonDecode(result);
+      String url = parsedData['data'];
+      dataLink = url;
+      print(dataLink);
+
+      notifyListeners();
+    } catch (e) {
+      print(e);
+    }
+    notifyListeners();
   }
 }
