@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:relax_tik/model/Pesanan.dart';
 
 class APIEmail {
-  static const String baseUrl = 'https://2365-103-105-33-93.ngrok-free.app';
+  static const String baseUrl = 'https://mustiket-3371fb7c3fb2.herokuapp.com';
   Future sendOTP(email, otp) async {
     // log(email);
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
