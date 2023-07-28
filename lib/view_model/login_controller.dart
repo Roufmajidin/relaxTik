@@ -4,10 +4,12 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:relax_tik/model/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../model/model_email.dart';
+import '../model/user.dart';
 
 enum RequestStateLogin { empty, loading, loaded, error }
 
@@ -20,8 +22,17 @@ final CollectionReference _usersCollection =
 class LoginController extends ChangeNotifier {
   RequestStateLogin _loginState = RequestStateLogin.empty;
   RequestStateLogin get loginState => _loginState;
+  UserModel? _user;
+  // Getter for user
 
-  Future<void> loginWithEmail(String email, String password) async {
+  UserModel? get user => _user;
+
+  void setUser(UserModel user) {
+    _user = user;
+    notifyListeners();
+  }
+
+  Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
       // _loginState = RequestState.loading;
 
@@ -29,18 +40,22 @@ class LoginController extends ChangeNotifier {
         email: email,
         password: password,
       );
+      var userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.email)
+          .get();
+
+      if (userData.exists) {
+        _user = UserModel(
+          email: userCredential.user!.email!,
+          nama: userData['nama'],
+        );
+        print(user!.nama);
+      }
+
       notifyListeners();
 
       print(email);
-
-      // Jika login berhasil, simpan informasi pengguna ke koleksi "users"
-      if (userCredential.user != null) {
-        Map<String, dynamic> userData = {
-          'email': email,
-        };
-
-        await saveUserData(email, userData);
-      }
 
       _loginState = RequestStateLogin.loaded;
       notifyListeners();
@@ -145,6 +160,39 @@ class LoginController extends ChangeNotifier {
     } catch (e) {
       print('Error changing password: $e');
       notifyListeners();
+    }
+  }
+
+  void register(
+      BuildContext context,
+      TextEditingController emailController,
+      TextEditingController passwordController,
+      TextEditingController usernameController) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text,
+        password: passwordController.text,
+      );
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.email)
+          .set({
+        'email': userCredential.user!.email,
+        'nama': usernameController.text,
+        'gambar': null
+        // Anda dapat menyimpan data tambahan lainnya sesuai kebutuhan aplikasi Anda.
+      });
+      // Registrasi berhasil, Anda dapat menambahkan kode navigasi ke halaman berikutnya di sini.
+      print('Registrasi berhasil: ${userCredential.user!.email}');
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        print('Password terlalu lemah.');
+      } else if (e.code == 'email-already-in-use') {
+        print('Email sudah digunakan pada akun lain.');
+      }
+    } catch (e) {
+      print('Terjadi kesalahan: $e');
     }
   }
 }
