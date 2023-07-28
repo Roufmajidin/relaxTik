@@ -159,7 +159,7 @@ class TiketController extends ChangeNotifier {
   }
 
   Future<void> reloadHalaman() async {
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(Duration(milliseconds: 500));
 
     fetchRiwayat();
     fetchTiket();

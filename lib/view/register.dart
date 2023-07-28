@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/kata_sandi_baru.dart';
 import 'package:relax_tik/view/login.dart';
 import 'package:relax_tik/view_model/controller_provider.dart';
+import 'package:relax_tik/view_model/login_controller.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -15,12 +17,16 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   @override
-  final passwordController = TextEditingController();
   final usernameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController1 = TextEditingController();
+  final passwordController2 = TextEditingController();
   bool isLihat = true;
   bool visible = false;
   var _formKey = GlobalKey<FormState>();
   Widget build(BuildContext context) {
+    final conti = Provider.of<LoginController>(context, listen: false);
+
     return Scaffold(
       backgroundColor: Color(0xffC7DFF0),
       appBar: AppBar(
@@ -85,7 +91,7 @@ class _RegisterState extends State<Register> {
                     return null;
                   },
                   decoration: InputDecoration(
-                    hintText: 'Masukkan Alamat Email',
+                    hintText: 'Masukkan Username',
                     hintStyle:
                         TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     enabledBorder: OutlineInputBorder(
@@ -105,16 +111,17 @@ class _RegisterState extends State<Register> {
                     filled: true,
                     contentPadding: const EdgeInsets.all(19),
                   ),
-                  style: TextStyle(color: Colors.grey[50], fontSize: 17),
+                  style: TextStyle(color: Colors.black, fontSize: 17),
                 ),
                 SizedBox(
                   height: 12,
                 ),
                 TextFormField(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   onChanged: (value) {},
                   showCursor: false,
                   textCapitalization: TextCapitalization.sentences,
-                  controller: usernameController,
+                  controller: emailController,
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
@@ -145,12 +152,13 @@ class _RegisterState extends State<Register> {
                     filled: true,
                     contentPadding: const EdgeInsets.all(19),
                   ),
-                  style: TextStyle(color: Colors.grey[50], fontSize: 17),
+                  style: TextStyle(color: Colors.black, fontSize: 17),
                 ),
                 SizedBox(
                   height: 12,
                 ),
                 TextFormField(
+                  controller: passwordController1,
                   obscureText: isLihat,
                   validator: (value) {
                     // if (value == null ||
@@ -203,14 +211,16 @@ class _RegisterState extends State<Register> {
                   height: 12,
                 ),
                 TextFormField(
+                  controller: passwordController2,
                   obscureText: isLihat2,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
                   validator: (value) {
-                    // if (value == null ||
-                    //     value.isEmpty ||
-                    //     !value.contains('@') ||
-                    //     !value.contains('.')) {
-                    //   return 'Invalid Email (harus ada @)';
-                    // }
+                    if (value == null || value.isEmpty) {
+                      return 'Masukan Password';
+                    } else if (passwordController1.text !=
+                        passwordController2.text) {
+                      return 'Invalid Password (harus sama)';
+                    }
                     return null;
                   },
                   onChanged: (value) {},
@@ -266,15 +276,38 @@ class _RegisterState extends State<Register> {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      onPressed: () {
+                      onPressed: () async {
                         log('Button pressed!');
 
-                        // ispressed == false
-                        //     ? ispressed = true
-                        //     :
-                        //     // beda lagi
-                        //     ispressed = false;
-                        // setState(() {});
+                        final reg = Provider.of<LoginController>(context,
+                            listen: false);
+                        if (emailController.text.isNotEmpty &&
+                            passwordController2.text.isNotEmpty &&
+                            passwordController1.text ==
+                                passwordController2.text) {
+                          // await login.loginWithEmail(email, password);
+                          reg.register(context, emailController,
+                              passwordController2, usernameController);
+
+                          // Navigasi ke halaman beranda setelah proses login berhasil
+                          if (reg.loginState != RequestStateLogin.loading &&
+                              reg.loginState != RequestStateLogin.error) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      Login()), // Ganti dengan halaman beranda yang sesuai
+                            );
+                            final snackBar = SnackBar(
+                              content: const Text('Kamu berhasil registrasi!'),
+                            );
+
+                            // Find the ScaffoldMessenger in the widget tree
+                            // and use it to show a SnackBar.
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(snackBar);
+                          }
+                        }
                       },
                       child: Text(
                         'Register',
