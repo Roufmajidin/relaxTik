@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/beli_tiket.dart';
@@ -34,7 +35,9 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
-
+    Future.microtask(
+      () => Provider.of<TiketController>(context, listen: false).refreshCart(),
+    );
     Future.microtask(
       () => Provider.of<TiketController>(context, listen: false).fetchRiwayat(),
     );
@@ -44,6 +47,8 @@ class _DashboardState extends State<Dashboard> {
   Widget build(BuildContext context) {
     var mediaquery = MediaQuery.of(context).size;
     final ref = Provider.of<TiketController>(context, listen: false);
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final User? user = _auth.currentUser;
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -99,9 +104,10 @@ class _DashboardState extends State<Dashboard> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              const Text(
-                                'Selamat datang, ......',
-                                style: TextStyle(fontWeight: FontWeight.w700),
+                              Text(
+                                'Selamat datang, ${_auth.currentUser?.email}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500),
                               )
                             ]),
                       ),
@@ -278,8 +284,7 @@ class _DashboardState extends State<Dashboard> {
                                                           listen: false);
                                                       cont.getPendingPesanan(
                                                           id: item.id);
-                                                      await Navigator.push(
-                                                          context,
+                                                      Navigator.push(context,
                                                           MaterialPageRoute(
                                                         builder: (context) {
                                                           return DetailTransaksi(

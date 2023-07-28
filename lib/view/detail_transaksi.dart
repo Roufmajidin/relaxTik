@@ -119,12 +119,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Text(
-                              widget.statusPage == 'pending_bayar'
-                                  ? conti.tot.toString()
-                                  : conti.totalHarga.toString(),
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            Consumer<TiketController>(
+                              builder: (context, value, child) => Text(
+                                widget.statusPage == 'pending_bayar'
+                                    ? value.tot.toString()
+                                    : value.totalHarga.toString(),
+                                style: TextStyle(
+                                    fontSize: 16, fontWeight: FontWeight.w500),
+                              ),
                             )
                           ],
                         ),

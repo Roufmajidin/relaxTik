@@ -16,7 +16,9 @@ class _BeliTiketState extends State<BeliTiket> {
   @override
   void initState() {
     super.initState();
-
+    Future.microtask(
+      () => Provider.of<TiketController>(context, listen: false).refreshCart(),
+    );
     Future.microtask(
       () => Provider.of<TiketController>(context, listen: false).fetchTiket(),
     );

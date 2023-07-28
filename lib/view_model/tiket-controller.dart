@@ -74,49 +74,37 @@ class TiketController extends ChangeNotifier {
   }
 
   void addToCart(TiketModel item) {
-    if (nama.contains(item.nama)) {
-      item.counter += 1;
+    if (_cartItems.contains(item)) {
+      int index = _cartItems.indexWhere((element) => element == item);
+      _cartItems[index].counter += 1;
     } else {
-      nama.add(item.nama);
-      item.counter += 1;
       _cartItems.add(item);
-      notifyListeners();
+      item.counter = 1;
     }
     log("total adalah ${totalHarga}");
     log(_cartItems.length.toString());
-    // for (var element in cartItems) {
-    //   log(element.nama);
-    // }
     notifyListeners();
   }
 
   void removeFromCart(TiketModel item) {
-    if (nama.contains(item.nama)) {
-      item.counter -= 1;
-      notifyListeners();
-    } else {
-      nama.add(item.nama);
-      item.counter -= 1;
-      // _cartItems.add(item);
-      // _cartItems.remove(item);
+    if (_cartItems.contains(item)) {
+      int index = _cartItems.indexWhere((element) => element == item);
+      if (_cartItems[index].counter > 1) {
+        _cartItems[index].counter -= 1;
+      } else {
+        _cartItems.removeAt(index);
+        nama.remove(item.nama);
+      }
+      log("total adalah ${totalHarga}");
+      log(_cartItems.length.toString());
       notifyListeners();
     }
-    item.counter == 0 ? _cartItems.remove(item) : 0;
-    notifyListeners();
-
-    log(cartItems.length.toString());
-    log("total adalah ${totalHarga}");
-    for (var element in cartItems) {
-      log(element.nama);
-    }
-    notifyListeners();
   }
 
   int get totalHarga {
     int total = 0;
     for (var item in _cartItems) {
       total += item.hargaTiket * item.counter;
-      notifyListeners();
     }
     notifyListeners();
 
@@ -149,9 +137,8 @@ class TiketController extends ChangeNotifier {
 
   Future<void> refreshCart() async {
     // await Future.delayed(Duration(seconds: 2));
-    fetchTiket();
 
-    _cartItems = [];
+    _cartItems.clear();
     notifyListeners();
   }
 
@@ -174,12 +161,9 @@ class TiketController extends ChangeNotifier {
           gambar: element.gambar,
           counter: element.counter,
         );
-        notifyListeners();
 
         newCartItems.add(tiket);
-        notifyListeners();
       }
-      notifyListeners();
 
       _cartItemsPending =
           newCartItems; // Timpa _cartItemsPending dengan list baru
@@ -193,5 +177,6 @@ class TiketController extends ChangeNotifier {
       print(e);
       throw "Can't get by Id";
     }
+    notifyListeners();
   }
 }
