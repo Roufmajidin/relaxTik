@@ -52,8 +52,40 @@ class TiketController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Future<List<DataRow>>? fetchSemuaData() async {
+  //   _requestState = RequestState.loading;
+  //   notifyListeners();
+  //   try {
+  //     List<DataPesanan> pesananData = await APIEmail.fetchSemuaData();
+
+  //     // Convert DataPesanan to DataRow
+  //     List<DataRow> dataRows = pesananData.map((dataPesanan) {
+  //       return DataRow(
+  //         id: 2,
+  //         checkoutLink: "",
+  //         createdAt: DateTime.now(),
+  //         orderId: "",
+  //         pesanan: [],
+  //         pemesan: "",
+  //         status: "",
+  //         totalAmount: "",
+  //         updatedAt: DateTime.now(),
+  //       );
+  //     }).toList();
+
+  //     _requestState = RequestState.loaded;
+  //     notifyListeners();
+  //     return dataRows;
+  //   } catch (e) {
+  //     _requestState = RequestState.error;
+  //     notifyListeners();
+  //     print(e);
+  //     throw "Can't get data";
+  //   }
+  // }
+
   Future<void> fetchRiwayat() async {
-    print("ok");
+    // print("ok");
 
     _requestState = RequestState.loading;
     notifyListeners();
@@ -61,14 +93,14 @@ class TiketController extends ChangeNotifier {
     final User? user = _auth.currentUser;
     try {
       _pesanan = await APIEmail.getRiwayat(email: user?.email);
-      print(pesanan.length);
+      // print(pesanan.length);
       _requestState = RequestState.loaded;
 
       notifyListeners();
     } catch (e) {
       _requestState = RequestState.error;
       notifyListeners();
-      print(e);
+      // print(e);
       throw "Cant get data";
     }
   }
@@ -81,8 +113,8 @@ class TiketController extends ChangeNotifier {
       _cartItems.add(item);
       item.counter = 1;
     }
-    log("total adalah ${totalHarga}");
-    log(_cartItems.length.toString());
+    // log("total adalah ${totalHarga}");
+    // log(_cartItems.length.toString());
     notifyListeners();
   }
 
@@ -95,8 +127,8 @@ class TiketController extends ChangeNotifier {
         _cartItems.removeAt(index);
         nama.remove(item.nama);
       }
-      log("total adalah ${totalHarga}");
-      log(_cartItems.length.toString());
+      // log("total adalah ${totalHarga}");
+      // log(_cartItems.length.toString());
       notifyListeners();
     }
   }
@@ -148,11 +180,11 @@ class TiketController extends ChangeNotifier {
 
       // Now you can access the pesanan field
 
-      log('ini adalah ${pesanan.checkoutLink}');
+      // log('ini adalah ${pesanan.checkoutLink}');
       List<TiketModel> newCartItems = [];
       for (var element in pesanan.pesanan) {
-        log('nama pesanan : ${element.nama}');
-        log('nama pesanan : ${element.counter}');
+        // log('nama pesanan : ${element.nama}');
+        // log('nama pesanan : ${element.counter}');
 
         TiketModel tiket = TiketModel(
           docId: "",
@@ -180,3 +212,27 @@ class TiketController extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+// class DataRow {
+//   int? id;
+//   String? pemesan;
+//   String? status;
+//   List<PesananElement>? pesanan;
+//   String? orderId;
+//   String? totalAmount;
+//   String? checkoutLink;
+//   DateTime? createdAt;
+//   DateTime? updatedAt;
+
+//   DataRow({
+//     this.id,
+//     this.pemesan,
+//     this.status,
+//     this.pesanan,
+//     this.orderId,
+//     this.totalAmount,
+//     this.checkoutLink,
+//     this.createdAt,
+//     this.updatedAt,
+//   });
+// }

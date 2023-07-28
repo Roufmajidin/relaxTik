@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/view/admin/admin_a.dart';
 import 'package:relax_tik/view/atur_ulang.dart';
 import 'package:relax_tik/view/login.dart';
 import 'package:relax_tik/view_model/controller_provider.dart';
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: user != null ? Dashboard() : Login(),
+        home: user != null ? AdminA() : Login(),
       ),
     );
   }

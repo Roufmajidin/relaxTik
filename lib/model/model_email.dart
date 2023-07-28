@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:relax_tik/model/Pesanan.dart';
 
 class APIEmail {
-  static const String baseUrl = 'https://fa49-103-191-218-82.ngrok-free.app';
+  static const String baseUrl = 'https://2365-103-105-33-93.ngrok-free.app';
   Future sendOTP(email, otp) async {
-    log(email);
+    // log(email);
     final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
     const servisId = 'service_gyix20h';
     const userId = 'kgBftW4780LNwN4e2';
@@ -33,6 +34,8 @@ class APIEmail {
     return response.statusCode;
   }
 
+  // Simulate fetching data from an API
+
   static Future<List<DataPesanan>> getRiwayat({String? email}) async {
     final response = await http.get(
       Uri.parse('$baseUrl/payment_histories/$email'), //class all
@@ -40,10 +43,10 @@ class APIEmail {
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       final dataList = responseData;
-      log(responseData.toString());
-      print(dataList.length);
-      // return responseData;
-      print(dataList);
+      // log(responseData.toString());
+      // print(dataList.length);
+      // // return responseData;
+      // print(dataList);
       return dataList
           .map<DataPesanan>((data) => DataPesanan.fromJson(data))
           .toList();
@@ -112,4 +115,17 @@ class APIEmail {
       throw Exception('Failed to load Booking data');
     }
   }
+}
+
+class DataRow {
+  final String id;
+  final String name;
+  final String email;
+  final String detail;
+
+  DataRow(
+      {required this.id,
+      required this.name,
+      required this.email,
+      required this.detail});
 }
