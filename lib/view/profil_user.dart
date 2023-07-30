@@ -14,7 +14,7 @@ class _UserProfileState extends State<UserProfile> {
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Center(child: Text('Profil')),
+        title: const Center(child: Text('Profil')),
         actions: [
           Padding(
             padding: const EdgeInsets.all(4.0),

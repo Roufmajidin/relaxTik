@@ -2,18 +2,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:provider/provider.dart';
-import 'package:relax_tik/view/admin/admin_a.dart';
-import 'package:relax_tik/view/atur_ulang.dart';
 import 'package:relax_tik/view/login.dart';
 import 'package:relax_tik/view_model/controller_provider.dart';
 import 'package:relax_tik/view_model/login_controller.dart';
-import 'dart:convert';
-import 'dart:io';
-import 'package:relax_tik/view/beli_tiket.dart';
-import 'package:relax_tik/view/dashboard.dart';
-import 'package:relax_tik/view/landing_page.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
 import 'package:xendit/xendit.dart';
@@ -45,7 +37,7 @@ void main() async {
   //     apiKey: apiKey);
 
   // print(res);
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -62,19 +54,19 @@ class MyApp extends StatelessWidget {
     //   merchantBaseUrl: 'https://api.sandbox.midtrans.com/v2',
     //   clientKey: _clentKey,
     // ));
-    final FirebaseAuth _auth = FirebaseAuth.instance;
+    final FirebaseAuth auth = FirebaseAuth.instance;
 
-    // Cek apakah pengguna sudah login atau belum
-    User? user = _auth.currentUser;
+    User? user = auth.currentUser;
+
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ControllerProvider()),
         ChangeNotifierProvider(create: (_) => LoginController()),
         ChangeNotifierProvider(create: (_) => TiketController()),
       ],
-      child: MaterialApp(
+      child: const MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: user != null ? Dashboard() : Login(),
+        home: Login(),
       ),
     );
   }

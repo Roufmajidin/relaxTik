@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import 'package:relax_tik/view/staging.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
-import '../model/tiket_model.dart';
 
 class DetailTransaksi extends StatefulWidget {
   var statusPage;
@@ -90,13 +89,13 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                   children: [
                                     Text(
                                       item.nama,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600),
                                     ),
                                     Text(
                                       "${item.counter} * ${item.hargaTiket}",
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w500),
                                     ),
@@ -107,14 +106,14 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                           );
                         },
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       const Divider(thickness: 2, color: Colors.black),
                       Container(
-                        margin: EdgeInsets.symmetric(vertical: 8),
+                        margin: const EdgeInsets.symmetric(vertical: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "Total",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
@@ -124,7 +123,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                                 widget.statusPage == 'pending_bayar'
                                     ? value.tot.toString()
                                     : value.totalHarga.toString(),
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                             )
@@ -178,33 +177,33 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Pemberitahuan'),
-          content: Text('Lanjut Ke pembayaran ?'),
+          title: const Text('Pemberitahuan'),
+          content: const Text('Lanjut Ke pembayaran ?'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(
                   builder: (context) {
-                    return WebViewExample(url: con.dataLink);
+                    return WebViewExample(
+                        url: con.dataLink, title: "Pembayaran");
                   },
                 ));
                 // con.itemCart = [];
               },
               style: TextButton.styleFrom(
-                primary: Colors.white, // Text color
-                backgroundColor: Colors.blue, // Button background color
+                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Button background color
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(10.0), // Button border radius
                 ),
               ),
-              child: Text('Ya'),
+              child: const Text('Ya'),
             ),
           ],
         );

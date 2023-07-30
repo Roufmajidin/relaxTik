@@ -1,12 +1,8 @@
 // isi controller mun di GETX
 
 import 'dart:convert';
-import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/foundation.dart';
-import 'package:midtrans_sdk/midtrans_sdk.dart';
 import 'package:http/http.dart' as http;
 
 class ControllerProvider extends ChangeNotifier {

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +8,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../model/model_email.dart';
-import '../model/user.dart';
 
 enum RequestStateLogin { empty, loading, loaded, error }
 
@@ -24,7 +22,7 @@ class LoginController extends ChangeNotifier {
   RequestStateLogin get loginState => _loginState;
   UserModel? _user;
   // Getter for user
-
+  var isLogin = false;
   UserModel? get user => _user;
 
   void setUser(UserModel user) {
@@ -34,12 +32,14 @@ class LoginController extends ChangeNotifier {
 
   Future<UserModel?> loginWithEmail(String email, String password) async {
     try {
-      // _loginState = RequestState.loading;
+      _loginState = RequestStateLogin.loading;
+      notifyListeners();
 
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
+
       var userData = await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.email)
@@ -52,7 +52,7 @@ class LoginController extends ChangeNotifier {
         );
         print(user!.nama);
       }
-
+      isLogin = true;
       notifyListeners();
 
       print(email);
@@ -64,6 +64,8 @@ class LoginController extends ChangeNotifier {
       notifyListeners();
       print('Error saat login: $e');
     }
+    // notifyListeners();
+    return null;
   }
 
   Future<void> saveUserData(String email, Map<String, dynamic> userData) async {
@@ -71,7 +73,7 @@ class LoginController extends ChangeNotifier {
       await _usersCollection.doc(email).set(userData);
     } catch (e) {
       print('Error saat menyimpan data pengguna: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -100,7 +102,7 @@ class LoginController extends ChangeNotifier {
   }
 
   Future<void> openGmailApp() async {
-    final url = 'https://mail.google.com';
+    const url = 'https://mail.google.com';
     var uri = Uri.parse(url);
     if (!await launchUrl(uri)) {
       throw 'Could not launch';

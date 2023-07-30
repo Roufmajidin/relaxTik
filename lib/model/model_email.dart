@@ -1,7 +1,5 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:relax_tik/model/Pesanan.dart';
 
@@ -38,13 +36,31 @@ class APIEmail {
 
   static Future<List<DataPesanan>> getRiwayat({String? email}) async {
     final response = await http.get(
-      Uri.parse('$baseUrl/payment_histories/$email'), //class all
+      Uri.parse('$baseUrl/api/payment_histories/$email'), //class all
     );
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       final dataList = responseData;
       // log(responseData.toString());
-      // print(dataList.length);
+      print(dataList.length);
+      // // return responseData;
+      // print(dataList);
+      return dataList
+          .map<DataPesanan>((data) => DataPesanan.fromJson(data))
+          .toList();
+    } else {
+      throw Exception('Failed to load Booking data');
+    }
+  }
+
+  static Future<List<DataPesanan>> getRiwayatAll() async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/api/payment_histories'));
+    if (response.statusCode == 200) {
+      final responseData = json.decode(response.body);
+      final dataList = responseData;
+      // log(responseData.toString());
+      print(dataList.length);
       // // return responseData;
       // print(dataList);
       return dataList
@@ -56,8 +72,8 @@ class APIEmail {
   }
 
   static Future<dynamic> bayar(data, totalBayar) async {
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final User? user = _auth.currentUser;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
     print('user : ${user!.email}');
     String pesanan = jsonEncode(data);
     final a = {

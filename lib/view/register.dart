@@ -2,10 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/kata_sandi_baru.dart';
 import 'package:relax_tik/view/login.dart';
-import 'package:relax_tik/view_model/controller_provider.dart';
 import 'package:relax_tik/view_model/login_controller.dart';
 
 class Register extends StatefulWidget {
@@ -23,14 +21,15 @@ class _RegisterState extends State<Register> {
   final passwordController2 = TextEditingController();
   bool isLihat = true;
   bool visible = false;
-  var _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  @override
   Widget build(BuildContext context) {
     final conti = Provider.of<LoginController>(context, listen: false);
 
     return Scaffold(
-      backgroundColor: Color(0xffC7DFF0),
+      backgroundColor: const Color(0xffC7DFF0),
       appBar: AppBar(
-        backgroundColor: Color(0xffC7DFF0),
+        backgroundColor: const Color(0xffC7DFF0),
         title: const Text(
           'Daftar',
           style: TextStyle(
@@ -96,13 +95,13 @@ class _RegisterState extends State<Register> {
                         TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         style: BorderStyle.solid,
                         color: Colors.white,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                           color: Color.fromARGB(255, 164, 164, 164),
                           width: 2.0),
                       borderRadius: BorderRadius.circular(12),
@@ -111,9 +110,9 @@ class _RegisterState extends State<Register> {
                     filled: true,
                     contentPadding: const EdgeInsets.all(19),
                   ),
-                  style: TextStyle(color: Colors.black, fontSize: 17),
+                  style: const TextStyle(color: Colors.black, fontSize: 17),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 TextFormField(
@@ -137,13 +136,13 @@ class _RegisterState extends State<Register> {
                         TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         style: BorderStyle.solid,
                         color: Colors.white,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                           color: Color.fromARGB(255, 164, 164, 164),
                           width: 2.0),
                       borderRadius: BorderRadius.circular(12),
@@ -152,9 +151,9 @@ class _RegisterState extends State<Register> {
                     filled: true,
                     contentPadding: const EdgeInsets.all(19),
                   ),
-                  style: TextStyle(color: Colors.black, fontSize: 17),
+                  style: const TextStyle(color: Colors.black, fontSize: 17),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 TextFormField(
@@ -178,13 +177,13 @@ class _RegisterState extends State<Register> {
                         TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         style: BorderStyle.solid,
                         color: Color.fromARGB(255, 164, 164, 164),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         style: BorderStyle.solid,
                         color: Colors.white,
                       ),
@@ -205,9 +204,9 @@ class _RegisterState extends State<Register> {
                           });
                         }),
                   ),
-                  style: TextStyle(color: Colors.black, fontSize: 17),
+                  style: const TextStyle(color: Colors.black, fontSize: 17),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 TextFormField(
@@ -232,13 +231,13 @@ class _RegisterState extends State<Register> {
                         TextStyle(color: Colors.grey.shade600, fontSize: 12),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         style: BorderStyle.solid,
                         color: Colors.white,
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                           color: Color.fromARGB(255, 164, 164, 164),
                           width: 2.0),
                       borderRadius: BorderRadius.circular(12),
@@ -258,9 +257,9 @@ class _RegisterState extends State<Register> {
                           });
                         }),
                   ),
-                  style: TextStyle(color: Colors.black, fontSize: 17),
+                  style: const TextStyle(color: Colors.black, fontSize: 17),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 SizedBox(
@@ -268,10 +267,9 @@ class _RegisterState extends State<Register> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xff73A8CF),
-                        onPrimary: Colors.white, //
+                        foregroundColor: Colors.white, backgroundColor: const Color(0xff73A8CF), //
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -296,10 +294,10 @@ class _RegisterState extends State<Register> {
                               context,
                               MaterialPageRoute(
                                   builder: (context) =>
-                                      Login()), // Ganti dengan halaman beranda yang sesuai
+                                      const Login()), // Ganti dengan halaman beranda yang sesuai
                             );
-                            final snackBar = SnackBar(
-                              content: const Text('Kamu berhasil registrasi!'),
+                            const snackBar = SnackBar(
+                              content: Text('Kamu berhasil registrasi!'),
                             );
 
                             // Find the ScaffoldMessenger in the widget tree
@@ -309,17 +307,17 @@ class _RegisterState extends State<Register> {
                           }
                         }
                       },
-                      child: Text(
+                      child: const Text(
                         'Register',
                         style:
-                            const TextStyle(fontSize: 12, color: Colors.white),
+                            TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     )),
                 const SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Anda tidak mempunyai akun?',
                       style: TextStyle(fontSize: 12, color: Colors.black),
                     ),
@@ -327,10 +325,10 @@ class _RegisterState extends State<Register> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => Login()),
+                          MaterialPageRoute(builder: (context) => const Login()),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         ' Login',
                         style: TextStyle(
                             fontSize: 12,

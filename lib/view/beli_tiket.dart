@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/detail_transaksi.dart';
@@ -24,6 +23,7 @@ class _BeliTiketState extends State<BeliTiket> {
     );
   }
 
+  @override
   Widget build(BuildContext context) {
     // List<String> tiketImages = [
     //   "assets/images/Tiket masuk.png",
@@ -40,7 +40,7 @@ class _BeliTiketState extends State<BeliTiket> {
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        title: Center(child: Text('Beli Tiket')),
+        title: const Center(child: Text('Beli Tiket')),
         actions: [
           Padding(
             padding: const EdgeInsets.all(4.0),
@@ -127,7 +127,8 @@ class ItemWidget extends StatefulWidget {
   int counter;
 
   ItemWidget(
-      {required this.index,
+      {super.key,
+      required this.index,
       required this.name,
       required this.image,
       required this.harga,
@@ -136,6 +137,8 @@ class ItemWidget extends StatefulWidget {
   @override
   _ItemWidgetState createState() => _ItemWidgetState();
 }
+
+var isTapped = false;
 
 class _ItemWidgetState extends State<ItemWidget> {
   @override
@@ -188,11 +191,12 @@ class _ItemWidgetState extends State<ItemWidget> {
               children: [
                 IconButton(
                     onPressed: () {
+                      isTapped = true;
                       // con.updateCounterForItem(
                       //     widget.index, widget.counter + 1);
                       con.addToCart(con.dataTiketWisata[widget.index]);
                     },
-                    icon: Icon(Icons.add_circle_outline)),
+                    icon: const Icon(Icons.add_circle_outline)),
                 Text(con.dataTiketWisata[widget.index].counter.toString()),
                 IconButton(
                     onPressed: () {
@@ -203,7 +207,7 @@ class _ItemWidgetState extends State<ItemWidget> {
                       }
                       // });
                     },
-                    icon: Icon(Icons.remove_circle_outline)),
+                    icon: const Icon(Icons.remove_circle_outline)),
               ],
             ),
           ),

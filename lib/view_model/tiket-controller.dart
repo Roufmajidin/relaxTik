@@ -1,9 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:relax_tik/model/model_email.dart';
 import 'package:relax_tik/model/tiket_model.dart';
 
@@ -15,8 +16,10 @@ class TiketController extends ChangeNotifier {
   List<TiketModel> dataTiketWisata = [];
   List<TiketModel> _cartItemsPending = [];
   List<TiketModel> get cartItemsPending => _cartItemsPending;
+  String gambarTiket = '';
+  String gambarTiketUpdate = '';
 
-  List<TiketModel> _cartItems = [];
+  final List<TiketModel> _cartItems = [];
 
   List<TiketModel> get cartItems => _cartItems;
   List nama = [];
@@ -24,16 +27,20 @@ class TiketController extends ChangeNotifier {
 // get data pesanan user
   List<DataPesanan> _pesanan = [];
   List<DataPesanan> get pesanan => _pesanan;
+
+  List<DataPesanan> _pesananUserById = [];
+  List<DataPesanan> get pesananUserById => _pesananUserById;
+
   RequestState _requestState = RequestState.empty;
   RequestState get requestState => _requestState;
   int tot = 0;
   String gambarKaderUpdate = "";
-  List<PesananElement> _pesananPending = [];
+  final List<PesananElement> _pesananPending = [];
   List<PesananElement> get pesananPending => _pesananPending;
   Future fetchTiket() async {
     // _requestState = RequestState.loading;
     notifyListeners();
-    final snapshot = await FirebaseFirestore.instance.collection('wisata');
+    final snapshot = FirebaseFirestore.instance.collection('wisata');
 
     snapshot.snapshots().listen((snapshot) {
       dataTiketWisata = snapshot.docs
@@ -83,17 +90,62 @@ class TiketController extends ChangeNotifier {
   //     throw "Can't get data";
   //   }
   // }
-
-  Future<void> fetchRiwayat() async {
+  Future<void> fetchRiwayatUser(emailUser) async {
     // print("ok");
 
     _requestState = RequestState.loading;
     notifyListeners();
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final User? user = _auth.currentUser;
+
     try {
-      _pesanan = await APIEmail.getRiwayat(email: user?.email);
-      // print(pesanan.length);
+      _pesananUserById = await APIEmail.getRiwayat(email: emailUser);
+      // print(pesanan.le ngth);
+      _requestState = RequestState.loaded;
+      for (var element in pesanan) {
+        print(element.pemesan);
+      }
+      notifyListeners();
+    } catch (e) {
+      _requestState = RequestState.error;
+      notifyListeners();
+      // print(e);
+      throw "Cant get data";
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchRiwayat(emailUser) async {
+    // print("ok");
+
+    // _requestState = RequestState.loading;
+    notifyListeners();
+
+    try {
+      _pesanan = await APIEmail.getRiwayat(email: emailUser);
+      // print(pesanan.le ngth);
+      // _requestState = RequestState.loaded;
+      for (var element in pesanan) {
+        print(element.pemesan);
+      }
+      notifyListeners();
+    } catch (e) {
+      // _requestState = RequestState.error;
+      notifyListeners();
+      // print(e);
+      throw "Cant get data";
+    }
+    notifyListeners();
+  }
+
+  Future<void> fetchRiwayaAll() async {
+    // print("ok");
+
+    _requestState = RequestState.loading;
+    notifyListeners();
+    // final FirebaseAuth _auth = FirebaseAuth.instance;
+    // final User? user = _auth.currentUser;
+    try {
+      _pesanan = await APIEmail.getRiwayatAll();
+      // print(pesanan.le ngth);
       _requestState = RequestState.loaded;
 
       notifyListeners();
@@ -103,6 +155,7 @@ class TiketController extends ChangeNotifier {
       // print(e);
       throw "Cant get data";
     }
+    notifyListeners();
   }
 
   void addToCart(TiketModel item) {
@@ -159,9 +212,9 @@ class TiketController extends ChangeNotifier {
   }
 
   Future<void> reloadHalaman() async {
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
 
-    fetchRiwayat();
+    fetchRiwayaAll();
     fetchTiket();
     // _cartItems = [];
     notifyListeners();
@@ -169,6 +222,7 @@ class TiketController extends ChangeNotifier {
 
   Future<void> refreshCart() async {
     // await Future.delayed(Duration(seconds: 2));
+    fetchRiwayaAll();
 
     _cartItems.clear();
     notifyListeners();
@@ -211,28 +265,69 @@ class TiketController extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  // update
+  void pickImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 512,
+        maxWidth: 512,
+        imageQuality: 75);
+
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('gambarTiket/${DateTime.now()}.jpg');
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value) {
+      gambarTiket = value;
+      print("terpilih gambar $value");
+
+      notifyListeners();
+    });
+    // notifyListeners();
+  }
+
+  void updatepickImage() async {
+    final image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 512,
+        maxWidth: 512,
+        imageQuality: 75);
+
+    Reference ref = FirebaseStorage.instance
+        .ref()
+        .child('gambarTiket/${DateTime.now()}.jpg');
+    await ref.putFile(File(image!.path));
+    ref.getDownloadURL().then((value) {
+      gambarTiketUpdate = value;
+      print("terpilih gambar $gambarTiketUpdate");
+
+      notifyListeners();
+    });
+  }
+
+  Future<void> fungsiDataWisata(
+      {required status, required TiketModel tiket}) async {
+    // TODOD : 1 update data ke collection wisata
+    if (status == 'edit') {
+      await FirebaseFirestore.instance
+          .collection("wisata")
+          .doc(tiket.docId)
+          .update(tiket.toMap());
+      print("ini id nya : ${tiket.docId} Sukses Update Data tiket");
+    } else if (status == 'tambah') {
+      await FirebaseFirestore.instance
+          .collection("wisata")
+          .doc(tiket.docId)
+          .set(tiket.toMap());
+      print("ini id nya : ${tiket.docId} Sukses menambah Data tiket");
+    } else if (status == 'hapus') {
+      await FirebaseFirestore.instance
+          .collection("wisata")
+          .doc(tiket.docId)
+          .delete();
+      print("ini id nya : ${tiket.docId} Sukses menaghapus Data tiket");
+    }
+    notifyListeners();
+  }
 }
-
-// class DataRow {
-//   int? id;
-//   String? pemesan;
-//   String? status;
-//   List<PesananElement>? pesanan;
-//   String? orderId;
-//   String? totalAmount;
-//   String? checkoutLink;
-//   DateTime? createdAt;
-//   DateTime? updatedAt;
-
-//   DataRow({
-//     this.id,
-//     this.pemesan,
-//     this.status,
-//     this.pesanan,
-//     this.orderId,
-//     this.totalAmount,
-//     this.checkoutLink,
-//     this.createdAt,
-//     this.updatedAt,
-//   });
-// }

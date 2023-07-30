@@ -46,6 +46,7 @@ dependencies:
   http: ^1.1.0
   iconly: ^1.0.1
   intl: ^0.18.1
+  maps_launcher: ^2.2.0
   midtrans_sdk: ^0.4.0
   open_mail_app: ^0.4.5
   pinput: ^2.3.0
@@ -55,6 +56,7 @@ dependencies:
   webview_flutter: ^4.2.2
   webview_flutter_wkwebview: ^3.7.2
   xendit: ^0.0.17
+  image_picker: ^0.8.6+1
 
 dev_dependencies:
   flutter_lints: ^2.0.0

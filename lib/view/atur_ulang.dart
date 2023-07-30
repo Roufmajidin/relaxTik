@@ -2,12 +2,9 @@ import 'dart:developer';
 
 import 'package:external_app_launcher/external_app_launcher.dart';
 import 'package:flutter/material.dart';
-import 'package:open_mail_app/open_mail_app.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
-import 'package:relax_tik/view/kata_sandi_baru.dart';
 import 'package:relax_tik/view/login.dart';
-import 'package:relax_tik/view_model/controller_provider.dart';
 import 'package:relax_tik/view_model/login_controller.dart';
 
 class AturUlangKataSandi extends StatefulWidget {
@@ -64,7 +61,7 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffC7DFF0),
+      backgroundColor: const Color(0xffC7DFF0),
       appBar: AppBar(
         title: const Text(
           'Atur ulang kata sandi',
@@ -78,7 +75,7 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
         centerTitle: true,
         actions: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
                 right: 16), // Add padding around the actions element
             child: Center(
               child: InkWell(
@@ -89,10 +86,10 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
 
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => Login()),
+                    MaterialPageRoute(builder: (context) => const Login()),
                   );
                 },
-                child: SizedBox(
+                child: const SizedBox(
                   height: 40,
                   child: Image(
                     image: AssetImage(
@@ -123,23 +120,23 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
             child: Align(
                 alignment: Alignment.center,
                 child: ispressed == false
-                    ? Text(
+                    ? const Text(
                         'Masukkan email yang terkait dengan akun anda dan kami akan mengirimkan email dengan intruksi untuk mengatur ulang kata sandi anda',
                         style: TextStyle(),
                       )
-                    : Text(
+                    : const Text(
                         'Kami telah mengirimkan intruksi pemulihan kata sandi ke email anda')),
           ),
           const SizedBox(
             height: 20,
           ),
           Padding(
-              padding: EdgeInsets.all(24),
+              padding: const EdgeInsets.all(24),
               child: ispressed == false
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Email'),
+                        const Text('Email'),
                         Form(
                           key: _formKey,
                           child: TextFormField(
@@ -157,13 +154,13 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                                   color: Colors.grey.shade600, fontSize: 12),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                   style: BorderStyle.solid,
                                   color: Colors.white,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
+                                borderSide: const BorderSide(
                                     color: Color.fromARGB(255, 164, 164, 164),
                                     width: 2.0),
                                 borderRadius: BorderRadius.circular(12),
@@ -172,12 +169,12 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                               filled: true,
                               contentPadding: const EdgeInsets.all(19),
                             ),
-                            style: TextStyle(color: Colors.black, fontSize: 17),
+                            style: const TextStyle(color: Colors.black, fontSize: 17),
                           ),
                         ),
                       ],
                     )
-                  : SizedBox()),
+                  : const SizedBox()),
           ispressed == false
               ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -185,11 +182,9 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                     width: 400,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xff73A8CF),
-
-                        onPrimary: Colors.white, //
+                        foregroundColor: Colors.white, backgroundColor: const Color(0xff73A8CF), //
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -201,10 +196,10 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                           ispressed = true;
                         });
                       },
-                      child: Text(
+                      child: const Text(
                         'Kirim Intruksi',
                         style:
-                            const TextStyle(fontSize: 12, color: Colors.white),
+                            TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
                   ),
@@ -215,11 +210,9 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                     width: 400,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Color(0xff73A8CF),
-
-                        onPrimary: Colors.white, //
+                        foregroundColor: Colors.white, backgroundColor: const Color(0xff73A8CF), //
                         padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.0),
                         ),
@@ -231,10 +224,10 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                           openGmailApp();
                         });
                       },
-                      child: Text(
+                      child: const Text(
                         'Buka Gmail',
                         style:
-                            const TextStyle(fontSize: 12, color: Colors.white),
+                            TextStyle(fontSize: 12, color: Colors.white),
                       ),
                     ),
                   ),
@@ -260,7 +253,7 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                           //   ),
                           // );
                         },
-                        child: Text(
+                        child: const Text(
                           'resend email',
                           style: TextStyle(
                               fontSize: 12,
@@ -268,14 +261,14 @@ class _AturUlangKataSandiState extends State<AturUlangKataSandi> {
                               fontWeight: FontWeight.w800),
                         ),
                       ),
-                      Text(
+                      const Text(
                         ' jika tidak ada inbox masuk',
                         style: TextStyle(fontSize: 12, color: Colors.black),
                       ),
                     ],
                   ),
                 )
-              : SizedBox()
+              : const SizedBox()
         ]),
       ),
     );

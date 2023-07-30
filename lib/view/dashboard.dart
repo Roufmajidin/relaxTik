@@ -9,6 +9,7 @@ import 'package:relax_tik/view/detail_transaksi.dart';
 import '../format/converter.dart';
 import '../view_model/login_controller.dart';
 import '../view_model/tiket-controller.dart';
+import 'lainnya.dart';
 import 'login.dart';
 
 class Dashboard extends StatefulWidget {
@@ -18,8 +19,12 @@ class Dashboard extends StatefulWidget {
   State<Dashboard> createState() => _DashboardState();
 }
 
+final FirebaseAuth _auth = FirebaseAuth.instance;
+
+final User? user = _auth.currentUser;
+
 class _DashboardState extends State<Dashboard> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   late List<Widget> _pages;
   late int currentIndex;
@@ -33,24 +38,40 @@ class _DashboardState extends State<Dashboard> {
 
   void updateView(int index) {
     setState(() {
+      var con = Provider.of<TiketController>(context, listen: false);
       currentIndex = index;
       _pages = [
-        Home(),
-        Profile(),
+        const Home(),
+        const Profile(),
       ];
     });
   }
 
+  bool isAdmin = false;
   @override
   void initState() {
     updateView(0);
     super.initState();
+
     Future.microtask(
       () => Provider.of<TiketController>(context, listen: false).refreshCart(),
     );
+
     Future.microtask(
-      () => Provider.of<TiketController>(context, listen: false).fetchRiwayat(),
+      () => Provider.of<TiketController>(context, listen: false)
+          .fetchRiwayat(user?.email),
     );
+  }
+
+  // String isAdmin = 'admin@gmail.com';
+  Future<void> checkAdminStatus() async {
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
+    final String? userEmail = user?.email;
+    isAdmin = (userEmail ==
+        'admin@gmail.com'); // Replace with your actual admin email.
+
+    setState(() {});
   }
 
   @override
@@ -58,7 +79,6 @@ class _DashboardState extends State<Dashboard> {
     var mediaquery = MediaQuery.of(context).size;
     final ref = Provider.of<TiketController>(context, listen: false);
     List judul = ['Home', 'Profil'];
-
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -69,12 +89,11 @@ class _DashboardState extends State<Dashboard> {
           InkWell(
             onTap: () async {
               print("logouted");
-              await Provider.of<LoginController>(context, listen: false)
-                  .logout();
+              Provider.of<LoginController>(context, listen: false).logout();
 
-              Navigator.pushReplacement(
+              await Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => Login()),
+                MaterialPageRoute(builder: (context) => const Login()),
               );
             },
             child: Padding(
@@ -139,10 +158,10 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     final ref = Provider.of<LoginController>(context, listen: false);
 
-    final FirebaseAuth _auth = FirebaseAuth.instance;
-    final User? user = _auth.currentUser;
+    final FirebaseAuth auth = FirebaseAuth.instance;
+    final User? user = auth.currentUser;
     return SingleChildScrollView(
-      physics: BouncingScrollPhysics(),
+      physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -213,7 +232,7 @@ class Home extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return BeliTiket();
+                            return const BeliTiket();
                           },
                         ),
                       );
@@ -225,13 +244,9 @@ class Home extends StatelessWidget {
                       label: 'Lainnya',
                       onTap: () {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) {
-                              return BeliTiket();
-                            },
-                          ),
-                        );
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Lainnya()));
                       }),
                 ],
               ),
@@ -250,7 +265,7 @@ class Home extends StatelessWidget {
                 builder: (context, cont, _) {
                   final i = cont.pesanan;
                   if (cont.requestState == RequestState.loading) {
-                    return SizedBox(
+                    return const SizedBox(
                         // height: mediaquery.height,
                         child: Center(child: CircularProgressIndicator()));
                   }
@@ -258,7 +273,7 @@ class Home extends StatelessWidget {
                   if (cont.requestState == RequestState.loaded) {
                     if (i != null) {
                       return ListView.builder(
-                          physics: BouncingScrollPhysics(),
+                          physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8),
                           itemCount: cont.pesanan.length,
@@ -268,7 +283,7 @@ class Home extends StatelessWidget {
                                 .pesanan[index];
                             return Container(
                               margin: const EdgeInsets.only(bottom: 20),
-                              padding: EdgeInsets.all(20.0),
+                              padding: const EdgeInsets.all(20.0),
                               height: 120,
                               color: const Color.fromRGBO(84, 87, 84, 0.12),
                               child: Row(
@@ -290,7 +305,7 @@ class Home extends StatelessWidget {
                                         DateFormatter
                                             .formatToDDMMYYYYWithMonthName(
                                                 item.createdAt),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ],
@@ -300,16 +315,16 @@ class Home extends StatelessWidget {
                                       Text(
                                           FormatRupiah.format(double.parse(
                                               item.totalAmount.toString())),
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontWeight: FontWeight.w600)),
                                       if (item.status != "pending")
                                         Text(
                                           item.status,
                                           style: item.status == 'pending'
-                                              ? TextStyle(
+                                              ? const TextStyle(
                                                   fontWeight: FontWeight.w300,
                                                   color: Colors.red)
-                                              : TextStyle(
+                                              : const TextStyle(
                                                   fontWeight: FontWeight.w600,
                                                   color: Colors.green),
                                         ),
@@ -333,7 +348,7 @@ class Home extends StatelessWidget {
                                             ));
                                           },
                                           style: TextButton.styleFrom(
-                                            primary: Colors.white,
+                                            foregroundColor: Colors.white,
                                             backgroundColor: Colors.red,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -349,16 +364,16 @@ class Home extends StatelessWidget {
                             );
                           });
                     } else if (i == '[]') {
-                      return Center(child: Text("Belum ada transaksi"));
+                      return const Center(child: Text("Belum ada transaksi"));
                     } else {
                       return const CircularProgressIndicator();
                     }
                   } else if (cont.requestState == RequestState.error) {
                     return SizedBox(
                         height: MediaQuery.of(context).size.height,
-                        child: Text("Error cant get Data"));
+                        child: const Text("Error cant get Data"));
                   }
-                  return Text("");
+                  return const Text("");
                 },
               ),
             ),
@@ -370,7 +385,7 @@ class Home extends StatelessWidget {
 }
 
 class MyButton extends StatelessWidget {
-  MyButton({
+  const MyButton({
     super.key,
     required this.icon,
     required this.label,
@@ -396,10 +411,10 @@ class MyButton extends StatelessWidget {
             child: icon,
           ),
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         Text(
           label,
-          style: TextStyle(fontWeight: FontWeight.w500),
+          style: const TextStyle(fontWeight: FontWeight.w500),
         )
       ],
     );
@@ -441,7 +456,7 @@ class Profile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [Text('Lokasi'), Icon(Icons.map_outlined)],
                 ),
@@ -458,7 +473,7 @@ class Profile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text('Komentar dan Penilaian'),
@@ -470,14 +485,7 @@ class Profile extends StatelessWidget {
             const SizedBox(height: 15),
             GestureDetector(
               onTap: () async {
-                print("logouted");
-                await Provider.of<LoginController>(context, listen: false)
-                    .logout();
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => Login()),
-                );
+                _showAlertDialog(context);
               },
               child: Container(
                 height: 75,
@@ -487,7 +495,7 @@ class Profile extends StatelessWidget {
                     borderRadius: BorderRadius.circular(20)),
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
@@ -506,6 +514,44 @@ class Profile extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  void _showAlertDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Pemberitahuan'),
+          content: const Text('Apakah yakin anda akan keluar aplikasi ?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                print("logouted");
+                await Provider.of<LoginController>(context, listen: false)
+                    .logout();
+
+                // con.itemCart = [];
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Button background color
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10.0), // Button border radius
+                ),
+              ),
+              child: const Text('Ya'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

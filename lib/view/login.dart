@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/atur_ulang.dart';
 import 'package:relax_tik/view/dashboard.dart';
-import 'package:relax_tik/view/kata_sandi_baru.dart';
 import 'package:relax_tik/view/register.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../view_model/login_controller.dart';
+import '../view_model/tiket-controller.dart';
+import 'admin/admin_a.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -28,7 +28,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Color(0xffC7DFF0),
+          backgroundColor: const Color(0xffC7DFF0),
           title: const Text(
             'Login',
             style: TextStyle(
@@ -52,11 +52,11 @@ class _LoginState extends State<Login> {
             ),
           ],
         ),
-        backgroundColor: Color(0xffC7DFF0),
+        backgroundColor: const Color(0xffC7DFF0),
         body: SafeArea(
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.only(top: 100),
+              padding: const EdgeInsets.only(top: 100),
               width: double.infinity,
               // constraints:
               //     BoxConstraints(minHeight: MediaQuery.of(context).size.height),
@@ -82,7 +82,7 @@ class _LoginState extends State<Login> {
                             )
                           ])),
                       const SizedBox(height: 70),
-                      Text('Email'),
+                      const Text('Email'),
                       TextFormField(
                         onChanged: (value) {},
                         showCursor: false,
@@ -99,17 +99,17 @@ class _LoginState extends State<Login> {
                         },
                         decoration: InputDecoration(
                           hintText: 'Masukkan Alamat Email',
-                          hintStyle:
-                              TextStyle(color: Colors.black, fontSize: 12),
+                          hintStyle: const TextStyle(
+                              color: Colors.black, fontSize: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               style: BorderStyle.solid,
                               color: Colors.white,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                                 color: Color.fromARGB(255, 164, 164, 164),
                                 width: 2.0),
                             borderRadius: BorderRadius.circular(12),
@@ -118,12 +118,13 @@ class _LoginState extends State<Login> {
                           filled: true,
                           contentPadding: const EdgeInsets.all(19),
                         ),
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 14),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 12,
                       ),
-                      Text('Password'),
+                      const Text('Password'),
                       TextFormField(
                         obscureText: isLihat,
                         validator: (value) {
@@ -143,17 +144,17 @@ class _LoginState extends State<Login> {
                         textCapitalization: TextCapitalization.sentences,
                         decoration: InputDecoration(
                           hintText: 'Password Anda',
-                          hintStyle:
-                              TextStyle(color: Colors.black, fontSize: 12),
+                          hintStyle: const TextStyle(
+                              color: Colors.black, fontSize: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               style: BorderStyle.solid,
                               color: Color.fromARGB(255, 164, 164, 164),
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               style: BorderStyle.solid,
                               color: Colors.white,
                             ),
@@ -176,7 +177,8 @@ class _LoginState extends State<Login> {
                                 });
                               }),
                         ),
-                        style: TextStyle(color: Colors.black, fontSize: 14),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 14),
                       ),
                       const SizedBox(height: 12),
                       Align(
@@ -188,12 +190,12 @@ class _LoginState extends State<Login> {
                               MaterialPageRoute(
                                 builder: (context) {
                                   // Replace `SecondScreen` with the screen you want to navigate to
-                                  return AturUlangKataSandi();
+                                  return const AturUlangKataSandi();
                                 },
                               ),
                             );
                           },
-                          child: Text(
+                          child: const Text(
                             'Lupa Kata Sandi',
                             style: TextStyle(
                                 fontSize: 12,
@@ -208,9 +210,9 @@ class _LoginState extends State<Login> {
                           height: 50,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              primary: Color(0xff73A8CF),
-                              onPrimary: Colors.white, //
-                              padding: EdgeInsets.symmetric(
+                              foregroundColor: Colors.white,
+                              backgroundColor: const Color(0xff73A8CF), //
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 10),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8.0),
@@ -218,6 +220,9 @@ class _LoginState extends State<Login> {
                             ),
                             onPressed: () async {
                               log('Button pressed!');
+                              final tiketCon = Provider.of<TiketController>(
+                                  context,
+                                  listen: false);
 
                               String email = emailController.text.trim();
                               String password = passwordController.text.trim();
@@ -232,26 +237,39 @@ class _LoginState extends State<Login> {
                                         RequestStateLogin.loading &&
                                     login.loginState !=
                                         RequestStateLogin.error) {
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            Dashboard()), // Ganti dengan halaman beranda yang sesuai
-                                  );
+                                  if (login.user?.email != 'admin@gmail.com') {
+                                    // Jika pengguna adalah user, navigasikan ke halaman Dashboard untuk user
+                                    await Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const Dashboard(),
+                                      ),
+                                    );
+                                  } else if (login.user?.email ==
+                                      'admin@gmail.com') {
+                                    // Jika pengguna adalah admin, navigasikan ke halaman Dashboard untuk admin
+                                    // Ganti halaman berikut dengan halaman Dashboard untuk admin sesuai kebutuhan Anda
+                                    await Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const AdminDashboard(),
+                                      ),
+                                    );
+                                  }
                                 }
                               }
                             },
-                            child: Text(
+                            child: const Text(
                               'Login',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.white),
+                              style:
+                                  TextStyle(fontSize: 12, color: Colors.white),
                             ),
                           )),
                       const SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             'Anda tidak mempunyai akun?',
                             style: TextStyle(fontSize: 12, color: Colors.black),
                           ),
@@ -262,12 +280,12 @@ class _LoginState extends State<Login> {
                                 MaterialPageRoute(
                                   builder: (context) {
                                     // Replace `SecondScreen` with the screen you want to navigate to
-                                    return Register();
+                                    return const Register();
                                   },
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               ' Daftar',
                               style: TextStyle(
                                   fontSize: 12,

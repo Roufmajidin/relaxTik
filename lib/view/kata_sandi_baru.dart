@@ -25,10 +25,11 @@ String pass = '';
 //
 class _KataSandiBaruState extends State<KataSandiBaru> {
   @override
-  var _formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffC7DFF0),
+      backgroundColor: const Color(0xffC7DFF0),
       appBar: AppBar(
         title: const Text(
           'Buat Kata Sandi Baru',
@@ -59,8 +60,8 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
       ),
       body: SingleChildScrollView(
         child: Column(children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 100.0),
+          const Padding(
+            padding: EdgeInsets.only(top: 100.0),
             child: Center(
               child: SizedBox(
                 width: 350,
@@ -74,7 +75,7 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Password'),
+                  const Text('Password'),
                   Form(
                     key: _formKey,
                     child: TextFormField(
@@ -95,13 +96,13 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                             color: Colors.grey.shade600, fontSize: 12),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             style: BorderStyle.solid,
                             color: Color.fromARGB(255, 164, 164, 164),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
+                          borderSide: const BorderSide(
                             style: BorderStyle.solid,
                             color: Colors.white,
                           ),
@@ -122,7 +123,7 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                               });
                             }),
                       ),
-                      style: TextStyle(color: Colors.black, fontSize: 17),
+                      style: const TextStyle(color: Colors.black, fontSize: 17),
                     ),
                   ),
                 ],
@@ -134,7 +135,7 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Konfirmasi Password'),
+                  const Text('Konfirmasi Password'),
                   TextFormField(
                     controller: newPasswordController,
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -160,13 +161,13 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                           TextStyle(color: Colors.grey.shade600, fontSize: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           style: BorderStyle.solid,
                           color: Colors.white,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                             color: Color.fromARGB(255, 164, 164, 164),
                             width: 2.0),
                         borderRadius: BorderRadius.circular(12),
@@ -186,7 +187,7 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
                             });
                           }),
                     ),
-                    style: TextStyle(color: Colors.black, fontSize: 17),
+                    style: const TextStyle(color: Colors.black, fontSize: 17),
                   ),
                 ],
               )),
@@ -197,8 +198,7 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
               width: 400,
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Color(0xff73A8CF),
-                  onPrimary: Colors.white, //
+                  foregroundColor: Colors.white, backgroundColor: const Color(0xff73A8CF), //
                   padding:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   shape: RoundedRectangleBorder(
@@ -215,9 +215,9 @@ class _KataSandiBaruState extends State<KataSandiBaru> {
 
                   setState(() {});
                 },
-                child: Text(
+                child: const Text(
                   'Atur ulang kata sandi',
-                  style: const TextStyle(fontSize: 12, color: Colors.white),
+                  style: TextStyle(fontSize: 12, color: Colors.white),
                 ),
               ),
             ),
