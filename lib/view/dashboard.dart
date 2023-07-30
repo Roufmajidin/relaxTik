@@ -534,9 +534,11 @@ class Profile extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 print("logouted");
-                await Provider.of<LoginController>(context, listen: false)
-                    .logout();
-
+                Provider.of<LoginController>(context, listen: false).logout();
+                await Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Login()),
+                );
                 // con.itemCart = [];
               },
               style: TextButton.styleFrom(
