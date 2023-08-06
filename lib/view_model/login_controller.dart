@@ -32,10 +32,9 @@ class LoginController extends ChangeNotifier {
   }
 
   Future<User?> loginWithEmail(String email, String password) async {
+    _loginState = RequestStateLogin.loading;
+    notifyListeners();
     try {
-      _loginState = RequestStateLogin.loading;
-      notifyListeners();
-
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
@@ -63,8 +62,8 @@ class LoginController extends ChangeNotifier {
       print('this email : $_email');
       notifyListeners();
 
-      isLogin = true;
       notifyListeners();
+      await Future.delayed(Duration(seconds: 1));
 
       _loginState = RequestStateLogin.loaded;
       notifyListeners();
@@ -88,19 +87,19 @@ class LoginController extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    _loginState = RequestStateLogin.loading;
+    notifyListeners();
     try {
-      // _loginState = RequestStateLogin.loading;
-      notifyListeners();
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.clear();
       await _auth.signOut();
       _email = '';
       _user = null;
-
-      // _loginState = RequestStateLogin.loaded;
+      await Future.delayed(Duration(seconds: 2));
+      _loginState = RequestStateLogin.loaded;
       notifyListeners();
     } catch (e) {
-      // _loginState = RequestStateLogin.error;
+      _loginState = RequestStateLogin.error;
       notifyListeners();
       print('Error during logout: $e');
     }

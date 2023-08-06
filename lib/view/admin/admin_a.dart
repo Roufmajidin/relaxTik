@@ -549,39 +549,46 @@ class Profile extends StatelessWidget {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pemberitahuan'),
-          content: const Text('Apakah yakin anda akan keluar aplikasi ?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                print("logouted");
-                await Provider.of<LoginController>(context, listen: false)
-                    .logout();
-
-                // con.itemCart = [];a
-                await Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const Login()),
-                );
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: Colors.blue, // Button background color
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Button border radius
-                ),
+        return Consumer<LoginController>(
+          builder: (context, value, child) => AlertDialog(
+            title: const Text('Pemberitahuan'),
+            content: const Text('Apakah yakin anda akan keluar aplikasi ?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
               ),
-              child: const Text('Ya'),
-            ),
-          ],
+              TextButton(
+                onPressed: () async {
+                  print("logouted");
+                  await value.logout();
+                  await Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const Login()),
+                  );
+                  // con.itemCart = [];
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Button background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Button border radius
+                  ),
+                ),
+                child: value.loginState == RequestStateLogin.loading
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ))
+                    : Text('Ya'),
+              ),
+            ],
+          ),
         );
       },
     );

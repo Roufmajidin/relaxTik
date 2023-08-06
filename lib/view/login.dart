@@ -24,6 +24,7 @@ final emailController = TextEditingController();
 bool isLihat = true;
 bool visible = false;
 var _formKey = GlobalKey<FormState>();
+bool isLoading = false;
 
 class _LoginState extends State<Login> {
   @override
@@ -78,21 +79,23 @@ class _LoginState extends State<Login> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text.rich(TextSpan(
-                          text: "Selamat Datang ,\n",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700),
-                          children: [
-                            TextSpan(
-                              text: "di Wisata Air Panas Gempol",
+                      isLoading == true
+                          ? const CircularProgressIndicator()
+                          : const Text.rich(TextSpan(
+                              text: "Selamat Datang ,\n",
                               style: TextStyle(
                                   color: Colors.black,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w500),
-                            )
-                          ])),
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w700),
+                              children: [
+                                  TextSpan(
+                                    text: "di Wisata Air Panas Gempol",
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 22,
+                                        fontWeight: FontWeight.w500),
+                                  )
+                                ])),
                       const SizedBox(height: 70),
                       const Text('Email'),
                       TextFormField(
@@ -217,71 +220,77 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       const SizedBox(height: 50),
-                      SizedBox(
-                          width: double.infinity,
-                          height: 50,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: const Color(0xff73A8CF), //
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                      Consumer<LoginController>(
+                        builder: (context, value, child) => SizedBox(
+                            width: double.infinity,
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                backgroundColor: const Color(0xff73A8CF), //
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
                               ),
-                            ),
-                            onPressed: () async {
-                              log('Button pressed!');
-                              final tiketCon = Provider.of<TiketController>(
-                                  context,
-                                  listen: false);
+                              onPressed: () async {
+                                log('Button pressed!');
 
-                              String email = emailController.text.trim();
-                              String password = passwordController.text.trim();
-                              final login = Provider.of<LoginController>(
-                                  context,
-                                  listen: false);
-                              if (email.isNotEmpty && password.isNotEmpty) {
-                                login.loginWithEmail(email, password);
-                                login.getEmail();
-                                final prov = Provider.of<TiketController>(
-                                    context,
-                                    listen: false);
-                                prov.reloadHalamanUser(email);
-                                // print('this iss ${login.emailUser}');
-                                if (email == 'admin@gmail.com') {
+                                String email = emailController.text.trim();
+                                String password =
+                                    passwordController.text.trim();
+
+                                if (email.isNotEmpty && password.isNotEmpty) {
+                                  await value.loginWithEmail(email, password);
+                                  await value.getEmail();
+                                  final prov = Provider.of<TiketController>(
+                                      context,
+                                      listen: false);
+                                  prov.reloadHalamanUser(email);
+                                  // print('this iss ${login.emailUser}');
+                                  if (value.loginState ==
+                                      RequestStateLogin.loading) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
+                                  }
+
+                                  if (email == 'admin@gmail.com') {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => AdminDashboard(),
+                                      ),
+                                    );
+                                  }
+                                  SizedBox(
+                                      // height: mediaquery.height,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.5,
+                                      child: Center(
+                                          child: CircularProgressIndicator()));
+
                                   await Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => AdminDashboard(),
+                                      builder: (context) => Dashboard(),
                                     ),
                                   );
+
+                                  // Navigasi ke halaman beranda setelah proses login berhasil
+                                  // emailController.clear();
+                                  // passwordController.clear();
                                 }
-                                SizedBox(
-                                    // height: mediaquery.height,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.5,
-                                    child: Center(
-                                        child: CircularProgressIndicator()));
-
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Dashboard(),
-                                  ),
-                                );
-
-                                // Navigasi ke halaman beranda setelah proses login berhasil
-                                // emailController.clear();
-                                // passwordController.clear();
-                              }
-                            },
-                            child: const Text(
-                              'Login',
-                              style:
-                                  TextStyle(fontSize: 12, color: Colors.white),
-                            ),
-                          )),
+                              },
+                              child: const Text(
+                                'Login',
+                                style: TextStyle(
+                                    fontSize: 12, color: Colors.white),
+                              ),
+                            )),
+                      ),
                       const SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
