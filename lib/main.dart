@@ -3,10 +3,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/view/admin/admin_a.dart';
+import 'package:relax_tik/view/dashboard.dart';
+import 'package:relax_tik/view/landing_page.dart';
 import 'package:relax_tik/view/login.dart';
 import 'package:relax_tik/view_model/controller_provider.dart';
 import 'package:relax_tik/view_model/login_controller.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:xendit/xendit.dart';
 
@@ -64,10 +68,86 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => LoginController()),
         ChangeNotifierProvider(create: (_) => TiketController()),
       ],
-      child: const MaterialApp(
+      child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Login(),
+        home: SplashScreen(),
       ),
     );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus(context);
+  }
+
+  Future<void> _checkLoginStatus(context) async {
+    LoginController loginProvider =
+        Provider.of<LoginController>(context, listen: false);
+    bool isLoggedIn = await loginProvider.checkLoginStatus(context);
+
+    if (isLoggedIn == true) {
+      // ignore: use_build_context_synchronously
+      Navigator.pushReplacement(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 1000),
+          pageBuilder: (_, __, ___) {
+            if (loginProvider.emailUser == 'admin@gmail.com') {
+              return AdminDashboard();
+            }
+            return LandingPage();
+          },
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = const Offset(1.0, 0.0);
+            var end = Offset.zero;
+            var curve = Curves.ease;
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        ),
+      );
+    } else {
+      // ignore: use_build_context_synchronously
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageRouteBuilder(
+          transitionDuration: const Duration(milliseconds: 1000),
+          pageBuilder: (_, __, ___) => const Login(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = const Offset(1.0, 0.0);
+            var end = Offset.zero;
+            var curve = Curves.ease;
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        ),
+        (route) => false,
+      );
+    }
   }
 }

@@ -5,7 +5,9 @@ import 'package:relax_tik/view/detail_transaksi.dart';
 import '../view_model/tiket-controller.dart';
 
 class BeliTiket extends StatefulWidget {
-  const BeliTiket({super.key});
+  var userEmail;
+
+  BeliTiket({super.key, required this.userEmail});
 
   @override
   State<BeliTiket> createState() => _BeliTiketState();
@@ -99,8 +101,10 @@ class _BeliTiketState extends State<BeliTiket> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) =>
-                        DetailTransaksi(statusPage: "baru_bayar")));
+                    builder: (context) => DetailTransaksi(
+                          statusPage: "baru_bayar",
+                          userEmail: widget.userEmail,
+                        )));
           },
           label: const Text(
             "Lanjut Bayar",

@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:relax_tik/view/staging.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
-
 class DetailTransaksi extends StatefulWidget {
   var statusPage;
 
-  DetailTransaksi({super.key, required this.statusPage});
+  var userEmail;
+
+  DetailTransaksi(
+      {super.key, required this.statusPage, required this.userEmail});
 
   @override
   State<DetailTransaksi> createState() => _DetailTransaksiState();
@@ -71,7 +73,7 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Consumer<TiketController>(
-                        builder: (context, cont, child) {
+                        builder: (context, cont, _) {
                           final items = widget.statusPage == 'pending_bayar'
                               ? cont.cartItemsPending
                               : cont.cartItems;
@@ -118,15 +120,13 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.w600),
                             ),
-                            Consumer<TiketController>(
-                              builder: (context, value, child) => Text(
-                                widget.statusPage == 'pending_bayar'
-                                    ? value.tot.toString()
-                                    : value.totalHarga.toString(),
-                                style: const TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.w500),
-                              ),
-                            )
+                            Text(
+                              widget.statusPage == 'pending_bayar'
+                                  ? conti.tot.toString()
+                                  : conti.totalHarga.toString(),
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w500),
+                            ),
                           ],
                         ),
                       ),
@@ -149,15 +149,8 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
           };
           print(jsonObject);
 
-          log("masuk");
-          log(conti.dataLink);
-
-          if (widget.statusPage == 'baru_bayar') {
-            conti.bayar(jsonList);
-          } else {
-            log(conti.dataLink);
-          }
-          _showAlertDialog(context, conti);
+          showAlertDialog(
+              context, conti, conti.dataLink, widget.userEmail, jsonList);
         },
         label: const Padding(
           padding: EdgeInsets.all(25),
@@ -172,40 +165,56 @@ class _DetailTransaksiState extends State<DetailTransaksi> {
     );
   }
 
-  void _showAlertDialog(BuildContext context, con) {
+  showAlertDialog(BuildContext context, con, dataLink, userEmail, jsonList) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Pemberitahuan'),
-          content: const Text('Lanjut Ke pembayaran ?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return WebViewExample(
-                        url: con.dataLink, title: "Pembayaran");
-                  },
-                ));
-                // con.itemCart = [];
-              },
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Button background color
-                shape: RoundedRectangleBorder(
-                  borderRadius:
-                      BorderRadius.circular(10.0), // Button border radius
-                ),
+        return Consumer<TiketController>(
+          builder: (context, value, child) => AlertDialog(
+            title: const Text('Pemberitahuan'),
+            content: const Text('Lanjut Ke pembayaran ?'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Cancel'),
               ),
-              child: const Text('Ya'),
-            ),
-          ],
+              TextButton(
+                onPressed: () async {
+                  log("masuk");
+                  await value.bayar(jsonList);
+                  var data = await value.dataLink;
+                  await Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return WebViewExample(
+                        url: data,
+                        title: "Pembayaran",
+                        userEmail: userEmail,
+                      );
+                    },
+                  ));
+                  // con.itemCart = [];
+                },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.blue, // Button background color
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10.0), // Button border radius
+                  ),
+                ),
+                child: value.requestState == RequestState.loading
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ))
+                    : Text('Ya'),
+              ),
+            ],
+          ),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:relax_tik/view/dashboard.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -117,7 +118,14 @@ class _LandingPageState extends State<LandingPage> {
               backgroundColor: const Color(0xFFDCE6C0),
               onPressed: () {
                 // Add your onPressed code here!
-                Navigator.pushNamed(context, '/dashboard');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return Dashboard();
+                    },
+                  ),
+                );
               },
               label: const Padding(
                 padding: EdgeInsets.all(25),

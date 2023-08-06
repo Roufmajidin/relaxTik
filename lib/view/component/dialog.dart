@@ -155,11 +155,11 @@ class _WidgetDialogState extends State<WidgetDialog> {
                                                       : cn.gambarTiketUpdate),
                                         )),
                                   ),
-                                  const SizedBox(
-                                    width: 65,
-                                  ),
+                                  // const SizedBox(
+                                  //   width: 65,
+                                  // ),
                                   SizedBox(
-                                    width: 240,
+                                    width: 100,
                                     height: 40,
                                     child: TextFormField(
                                       controller: gambarController,

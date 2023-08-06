@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/view/beli_tiket.dart';
 import 'package:relax_tik/view/detail_transaksi.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../format/converter.dart';
 import '../view_model/login_controller.dart';
@@ -13,15 +14,13 @@ import 'lainnya.dart';
 import 'login.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  Dashboard({
+    super.key,
+  });
 
   @override
   State<Dashboard> createState() => _DashboardState();
 }
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
-
-final User? user = _auth.currentUser;
 
 class _DashboardState extends State<Dashboard> {
   final int _selectedIndex = 0;
@@ -38,11 +37,12 @@ class _DashboardState extends State<Dashboard> {
 
   void updateView(int index) {
     setState(() {
-      var con = Provider.of<TiketController>(context, listen: false);
+      final prov = Provider.of<LoginController>(context, listen: false);
+
       currentIndex = index;
       _pages = [
-        const Home(),
-        const Profile(),
+        Home(email: prov.user?.email),
+        Profile(email: prov.user?.email),
       ];
     });
   }
@@ -50,17 +50,19 @@ class _DashboardState extends State<Dashboard> {
   bool isAdmin = false;
   @override
   void initState() {
-    updateView(0);
     super.initState();
 
-    Future.microtask(
-      () => Provider.of<TiketController>(context, listen: false).refreshCart(),
-    );
+    updateView(0);
+    refresh();
+    print('init');
+  }
 
-    Future.microtask(
-      () => Provider.of<TiketController>(context, listen: false)
-          .fetchRiwayat(user?.email),
-    );
+  Future<void> refresh() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var emaila = prefs.getString('email');
+    print('emaila : $emaila');
+    Provider.of<TiketController>(context, listen: false)
+        .reloadHalamanUser(emaila);
   }
 
   // String isAdmin = 'admin@gmail.com';
@@ -105,7 +107,7 @@ class _DashboardState extends State<Dashboard> {
       ),
       extendBodyBehindAppBar: true,
       body: RefreshIndicator(
-        onRefresh: ref.reloadHalaman,
+        onRefresh: refresh,
         child: SafeArea(child: _pages[currentIndex]),
       ),
       bottomNavigationBar: BottomAppBar(
@@ -150,39 +152,42 @@ class _DashboardState extends State<Dashboard> {
 }
 
 class Home extends StatelessWidget {
-  const Home({
-    super.key,
-  });
+  var email;
+
+  Home({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
     final ref = Provider.of<LoginController>(context, listen: false);
-
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
+    print('user ${user?.email}');
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            SizedBox(
-              height: 50,
-              // color: Colors.amber,
-              child:
-                  Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-                Image.asset(
-                  'assets/icons/iconoir_profile-circle.png',
-                  height: 40,
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  'Selamat datang, ${ref.user?.nama}',
-                  style: const TextStyle(fontWeight: FontWeight.w500),
-                )
-              ]),
+            Consumer<LoginController>(
+              builder: (context, con, child) => SizedBox(
+                height: 50,
+                // color: Colors.amber,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/icons/iconoir_profile-circle.png',
+                        height: 40,
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Text(
+                        'Selamat datang, ${con.user?.nama}',
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      )
+                    ]),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -196,21 +201,13 @@ class Home extends StatelessWidget {
                   Align(
                     alignment: Alignment.topCenter,
                     child: Text(
-                      'Rp.',
+                      'Relaxtik',
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          TextStyle(fontSize: 34, fontWeight: FontWeight.w700),
                     ),
                   ),
                   SizedBox(
                     width: 10,
-                  ),
-                  Text(
-                    '200.000',
-                    style: TextStyle(
-                      fontSize: 35,
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.w700,
-                    ),
                   ),
                 ],
               ),
@@ -232,7 +229,9 @@ class Home extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) {
-                            return const BeliTiket();
+                            return BeliTiket(
+                              userEmail: email,
+                            );
                           },
                         ),
                       );
@@ -242,11 +241,15 @@ class Home extends StatelessWidget {
                   MyButton(
                       icon: Image.asset('assets/icons/more.png'),
                       label: 'Lainnya',
-                      onTap: () {
+                      onTap: () async {
+                        // print(email);
+
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Lainnya()));
+                                builder: (context) => Lainnya(
+                                      userEmail: email,
+                                    )));
                       }),
                 ],
               ),
@@ -263,10 +266,11 @@ class Home extends StatelessWidget {
             Container(
               child: Consumer<TiketController>(
                 builder: (context, cont, _) {
-                  final i = cont.pesanan;
+                  final i = cont.pesananUserById;
                   if (cont.requestState == RequestState.loading) {
                     return const SizedBox(
                         // height: mediaquery.height,
+
                         child: Center(child: CircularProgressIndicator()));
                   }
 
@@ -276,11 +280,11 @@ class Home extends StatelessWidget {
                           physics: const BouncingScrollPhysics(),
                           shrinkWrap: true,
                           padding: const EdgeInsets.all(8),
-                          itemCount: cont.pesanan.length,
+                          itemCount: cont.pesananUserById.length,
                           itemBuilder: (BuildContext context, int index) {
                             final item = Provider.of<TiketController>(context,
                                     listen: false)
-                                .pesanan[index];
+                                .pesananUserById[index];
                             return Container(
                               margin: const EdgeInsets.only(bottom: 20),
                               padding: const EdgeInsets.all(20.0),
@@ -342,8 +346,9 @@ class Home extends StatelessWidget {
                                                 MaterialPageRoute(
                                               builder: (context) {
                                                 return DetailTransaksi(
-                                                    statusPage:
-                                                        'pending_bayar');
+                                                  statusPage: 'pending_bayar',
+                                                  userEmail: email,
+                                                );
                                               },
                                             ));
                                           },
@@ -422,12 +427,13 @@ class MyButton extends StatelessWidget {
 }
 
 class Profile extends StatelessWidget {
-  const Profile({super.key});
+  var email;
+
+  Profile({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
     final ref = Provider.of<LoginController>(context, listen: false);
-
     return SingleChildScrollView(
       child: Container(
         width: double.infinity,
@@ -442,7 +448,7 @@ class Profile extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Text(
-              ref.user!.nama.toString(),
+              ref.user?.email == null ? email : ref.user?.email,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 50),

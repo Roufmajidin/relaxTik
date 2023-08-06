@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:relax_tik/model/tiket_model.dart';
+import 'package:relax_tik/view/admin/laporan.dart';
 import 'package:relax_tik/view_model/tiket-controller.dart';
 
 import '../../format/converter.dart';
@@ -51,6 +52,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   void initState() {
     updateView(0);
+    no = 1;
     super.initState();
 
     Future.microtask(
@@ -182,8 +184,10 @@ class _WisataState extends State<Wisata> {
                         builder: (context, cont, _) {
                           final i = cont.dataTiketWisata;
                           if (cont.requestState == RequestState.loading) {
-                            return const SizedBox(
+                            return SizedBox(
                                 // height: mediaquery.height,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.5,
                                 child:
                                     Center(child: CircularProgressIndicator()));
                           }
@@ -242,7 +246,7 @@ class _WisataState extends State<Wisata> {
                                             ],
                                           ),
                                           const SizedBox(
-                                            width: 50,
+                                            width: 2,
                                           ),
                                           Column(
                                             children: [
@@ -301,104 +305,128 @@ class _WisataState extends State<Wisata> {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({
     super.key,
   });
 
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final ref = Provider.of<TiketController>(context, listen: false);
 
     final FirebaseAuth auth = FirebaseAuth.instance;
     final User? user = auth.currentUser;
-    return SingleChildScrollView(
-      physics: const ScrollPhysics(),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: InkWell(
-                onTap: () {
-                  ref.reloadHalaman();
-                },
-                child: const Text(
-                  "Data Pesanan User",
-                  style: TextStyle(fontSize: 18),
+    return Scaffold(
+      // backgroundColor: const Color(0xFFDCE6C0),
+      body: SingleChildScrollView(
+        physics: const ScrollPhysics(),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: () {
+                    ref.reloadHalaman();
+                  },
+                  child: const Text(
+                    "Data Pesanan User",
+                    style: TextStyle(fontSize: 18),
+                  ),
                 ),
               ),
-            ),
-            DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'No.',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Pemesan',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Status',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Expanded(
-                      child: Text(
-                        'Aksi',
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ),
-                  ),
-                ],
-                rows: List<DataRow>.generate(ref.pesanan.length, (index) {
-                  // print('jumlah peasanan : ${pesanan.length}');
-                  // // print(pesanan[index].id);
-                  // print('cek');
-                  List<PesananElement> jenisTiket = ref.pesanan[index].pesanan;
-                  int jumlahTiket = 0;
-                  for (var element in jenisTiket) {
-                    jumlahTiket += element.counter;
-                  }
-                  return DataRow(
-                    cells: [
-                      DataCell(Text((no++).toString())),
-                      DataCell(Text(ref.pesanan[index].pemesan)),
-                      DataCell(Text(ref.pesanan[index].status)),
-                      DataCell(InkWell(
-                          onTap: () {
-                            print(ref.pesanan[index].pemesan);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) {
-                                  return DetailPesanan(
-                                      emailUser: ref.pesanan[index].pemesan);
+              Consumer<TiketController>(
+                builder: (context, value, child) {
+                  return DataTable(
+                      columns: const <DataColumn>[
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Id. pes..',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Pemesan',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Status',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Expanded(
+                            child: Text(
+                              'Aksi',
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ),
+                        ),
+                      ],
+                      rows: List<DataRow>.generate(ref.pesanan.length, (index) {
+                        // print('jumlah peasanan : ${pesanan.length}');
+                        // // print(pesanan[index].id);
+                        // print('cek');
+                        List<PesananElement> jenisTiket =
+                            ref.pesanan[index].pesanan;
+                        int jumlahTiket = 0;
+                        for (var element in jenisTiket) {
+                          jumlahTiket += element.counter;
+                        }
+                        return DataRow(
+                          cells: [
+                            DataCell(Text((ref.pesanan[index].id).toString())),
+                            DataCell(Text(ref.pesanan[index].pemesan)),
+                            DataCell(Text(ref.pesanan[index].status)),
+                            DataCell(InkWell(
+                                onTap: () {
+                                  print(ref.pesanan[index].pemesan);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) {
+                                        return DetailPesanan(
+                                            emailUser:
+                                                ref.pesanan[index].pemesan);
+                                      },
+                                    ),
+                                  );
                                 },
-                              ),
-                            );
-                          },
-                          child: const Text("Detail"))),
-                    ],
-                  );
-                })),
-          ],
+                                child: const Text("Detail"))),
+                          ],
+                        );
+                      }));
+                },
+              ),
+            ],
+          ),
         ),
       ),
+      floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: const Color.fromRGBO(114, 136, 214, 1),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Laporan()));
+          },
+          label: const Text(
+            "Cetak Laporan",
+            style: TextStyle(color: Colors.white),
+          )),
     );
   }
 }
@@ -482,25 +510,6 @@ class Profile extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 15),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                height: 75,
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20)),
-                padding:
-                    const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Komentar dan Penilaian'),
-                    Icon(Icons.thumb_up_alt_outlined)
-                  ],
-                ),
-              ),
-            ),
             const SizedBox(height: 15),
             GestureDetector(
               onTap: () async {

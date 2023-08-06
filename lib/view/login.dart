@@ -2,9 +2,11 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:relax_tik/main.dart';
 import 'package:relax_tik/view/atur_ulang.dart';
 import 'package:relax_tik/view/dashboard.dart';
 import 'package:relax_tik/view/register.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../view_model/login_controller.dart';
 import '../view_model/tiket-controller.dart';
@@ -24,6 +26,16 @@ bool visible = false;
 var _formKey = GlobalKey<FormState>();
 
 class _LoginState extends State<Login> {
+  @override
+  void dispose() {
+    // Panggil dispose dari LoginController
+    // Provider.of<LoginController>(context, listen: false).dispose();
+    // Provider.of<TiketController>(context, listen: false).dispose();
+    // passwordController.dispose();
+    // emailController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -230,33 +242,38 @@ class _LoginState extends State<Login> {
                                   context,
                                   listen: false);
                               if (email.isNotEmpty && password.isNotEmpty) {
-                                await login.loginWithEmail(email, password);
+                                login.loginWithEmail(email, password);
+                                login.getEmail();
+                                final prov = Provider.of<TiketController>(
+                                    context,
+                                    listen: false);
+                                prov.reloadHalamanUser(email);
+                                // print('this iss ${login.emailUser}');
+                                if (email == 'admin@gmail.com') {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AdminDashboard(),
+                                    ),
+                                  );
+                                }
+                                SizedBox(
+                                    // height: mediaquery.height,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    child: Center(
+                                        child: CircularProgressIndicator()));
+
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => Dashboard(),
+                                  ),
+                                );
 
                                 // Navigasi ke halaman beranda setelah proses login berhasil
-                                if (login.loginState !=
-                                        RequestStateLogin.loading &&
-                                    login.loginState !=
-                                        RequestStateLogin.error) {
-                                  if (login.user?.email != 'admin@gmail.com') {
-                                    // Jika pengguna adalah user, navigasikan ke halaman Dashboard untuk user
-                                    await Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const Dashboard(),
-                                      ),
-                                    );
-                                  } else if (login.user?.email ==
-                                      'admin@gmail.com') {
-                                    // Jika pengguna adalah admin, navigasikan ke halaman Dashboard untuk admin
-                                    // Ganti halaman berikut dengan halaman Dashboard untuk admin sesuai kebutuhan Anda
-                                    await Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const AdminDashboard(),
-                                      ),
-                                    );
-                                  }
-                                }
+                                // emailController.clear();
+                                // passwordController.clear();
                               }
                             },
                             child: const Text(

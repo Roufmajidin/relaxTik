@@ -35,6 +35,7 @@ class APIEmail {
   // Simulate fetching data from an API
 
   static Future<List<DataPesanan>> getRiwayat({String? email}) async {
+    print('di rest : $email');
     final response = await http.get(
       Uri.parse('$baseUrl/api/payment_histories/$email'), //class all
     );
@@ -54,8 +55,7 @@ class APIEmail {
   }
 
   static Future<List<DataPesanan>> getRiwayatAll() async {
-    final response =
-        await http.get(Uri.parse('$baseUrl/api/payment_histories'));
+    final response = await http.get(Uri.parse('$baseUrl/payment_histories'));
     if (response.statusCode == 200) {
       final responseData = json.decode(response.body);
       final dataList = responseData;

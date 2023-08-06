@@ -24,13 +24,14 @@ class LoginController extends ChangeNotifier {
   // Getter for user
   var isLogin = false;
   UserModel? get user => _user;
-
+  String? _email;
+  String? get emailUser => _email;
   void setUser(UserModel user) {
     _user = user;
     notifyListeners();
   }
 
-  Future<UserModel?> loginWithEmail(String email, String password) async {
+  Future<User?> loginWithEmail(String email, String password) async {
     try {
       _loginState = RequestStateLogin.loading;
       notifyListeners();
@@ -50,12 +51,20 @@ class LoginController extends ChangeNotifier {
           email: userCredential.user!.email!,
           nama: userData['nama'],
         );
-        print(user!.nama);
+        print(_user?.nama);
+        _email = userCredential.user!.email;
       }
-      isLogin = true;
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      prefs.setString('email', email);
+      prefs.setString('password', password);
+      _email = userCredential.user!.email;
+      print('this email : $_email');
       notifyListeners();
 
-      print(email);
+      isLogin = true;
+      notifyListeners();
 
       _loginState = RequestStateLogin.loaded;
       notifyListeners();
@@ -64,9 +73,10 @@ class LoginController extends ChangeNotifier {
       notifyListeners();
       print('Error saat login: $e');
     }
-    // notifyListeners();
     return null;
   }
+
+  // local
 
   Future<void> saveUserData(String email, Map<String, dynamic> userData) async {
     try {
@@ -79,18 +89,22 @@ class LoginController extends ChangeNotifier {
 
   Future<void> logout() async {
     try {
-      _loginState = RequestStateLogin.loading;
+      // _loginState = RequestStateLogin.loading;
       notifyListeners();
-
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
       await _auth.signOut();
+      _email = '';
+      _user = null;
 
-      _loginState = RequestStateLogin.loaded;
+      // _loginState = RequestStateLogin.loaded;
       notifyListeners();
     } catch (e) {
-      _loginState = RequestStateLogin.error;
+      // _loginState = RequestStateLogin.error;
       notifyListeners();
       print('Error during logout: $e');
     }
+    notifyListeners();
   }
 
   Future forgotPassword({required String email}) async {
@@ -197,4 +211,34 @@ class LoginController extends ChangeNotifier {
       print('Terjadi kesalahan: $e');
     }
   }
+
+  // local
+  Future<void> getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    var email = prefs.getString('email');
+
+    print('Email yang tersimpan di SharedPreferences: $email');
+    notifyListeners();
+  }
+
+  Future<bool> checkLoginStatus(context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedEmail = prefs.getString('email');
+    String? savedPassword = prefs.getString('password');
+    print('saved1: $savedEmail');
+    print('saved2: $savedPassword');
+    // final prov = Provider.of<LoginController>(context, listen: false);
+    if (savedEmail != null && savedPassword != null) {
+      await loginWithEmail(savedEmail, savedPassword);
+      // getEmail();
+
+      return true;
+    }
+    notifyListeners();
+
+    return false;
+  }
+
+  notifyListeners();
 }

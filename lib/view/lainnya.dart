@@ -5,7 +5,9 @@ import 'package:relax_tik/view/staging.dart';
 import '../view_model/login_controller.dart';
 
 class Lainnya extends StatelessWidget {
-  const Lainnya({super.key});
+  var userEmail;
+
+  Lainnya({super.key, required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +81,8 @@ class Lainnya extends StatelessWidget {
                     print("buka Maps");
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
-                        return const WebViewExample(
+                        return WebViewExample(
+                            userEmail: userEmail,
                             title: "Lokasi Wisata",
                             url:
                                 'https://www.google.com/maps/place/PT+Indocement+TP+Palimanan/@-6.7018752,108.3688419,14z/data=!4m10!1m2!2m1!1sindocement+palimanan!3m6!1s0x2e6edfc8114a110b:0x636c898eeb87aadf!8m2!3d-6.7018752!4d108.4048908!15sChRpbmRvY2VtZW50IHBhbGltYW5hbiIDiAEBkgETY2VtZW50X21hbnVmYWN0dXJlcuABAA!16s%2Fg%2F11bwylj7fs?entry=ttu');
@@ -146,7 +149,8 @@ class Lainnya extends StatelessWidget {
                 // con.itemCart = [];
               },
               style: TextButton.styleFrom(
-                foregroundColor: Colors.white, backgroundColor: Colors.blue, // Button background color
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.blue, // Button background color
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(10.0), // Button border radius

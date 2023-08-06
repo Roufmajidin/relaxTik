@@ -39,7 +39,7 @@ class _DetailPesananState extends State<DetailPesanan> {
   @override
   Widget build(BuildContext context) {
     // log(pesanan.length);
-    final con = Provider.of<TiketController>(context, listen: false);
+    // final con = Provider.of<TiketController>(context, listen: false);
     return Scaffold(
       backgroundColor: const Color.fromRGBO(199, 223, 240, 1),
       appBar: AppBar(
@@ -76,8 +76,9 @@ class _DetailPesananState extends State<DetailPesanan> {
                   builder: (context, cont, _) {
                     final i = cont.pesananUserById;
                     if (cont.requestState == RequestState.loading) {
-                      return const SizedBox(
+                      return SizedBox(
                           // height: mediaquery.height,
+                          height: MediaQuery.of(context).size.height,
                           child: Center(child: CircularProgressIndicator()));
                     }
 
@@ -159,9 +160,36 @@ class _DetailPesananState extends State<DetailPesanan> {
                                                           ],
                                                         ),
                                                       ),
-                                                    )
+                                                    ),
                                                   ],
                                                 ),
+                                              Row(
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10.0,
+                                                            right: 100),
+                                                    child: Text(
+                                                      "Tanggal Pesan :",
+                                                      style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            top: 10.0),
+                                                    child: Text(
+                                                      DateFormatter
+                                                          .formatToDDMMYYYYWithMonthName(
+                                                              item.createdAt),
+                                                      style: TextStyle(),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ],
                                           ),
                                         ),

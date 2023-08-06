@@ -7,12 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:relax_tik/model/model_email.dart';
 import 'package:relax_tik/model/tiket_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../model/Pesanan.dart';
+import '../model/order.dart';
 
 enum RequestState { empty, loading, loaded, error }
 
 class TiketController extends ChangeNotifier {
+  static const String baseUrl = 'https://mustiket-3371fb7c3fb2.herokuapp.com';
+
   List<TiketModel> dataTiketWisata = [];
   List<TiketModel> _cartItemsPending = [];
   List<TiketModel> get cartItemsPending => _cartItemsPending;
@@ -31,12 +35,53 @@ class TiketController extends ChangeNotifier {
   List<DataPesanan> _pesananUserById = [];
   List<DataPesanan> get pesananUserById => _pesananUserById;
 
+// laporan
+  List<Orders> _orders = [];
+  List<Orders> get orders => _orders;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+// end of uhuy laporan
   RequestState _requestState = RequestState.empty;
   RequestState get requestState => _requestState;
   int tot = 0;
   String gambarKaderUpdate = "";
   final List<PesananElement> _pesananPending = [];
   List<PesananElement> get pesananPending => _pesananPending;
+
+//  range pesanan user uhuy
+  List<DataPesanan> getOrdersByDateRange(DateTime startDate, DateTime endDate) {
+    return pesanan.where((order) {
+      return order.createdAt.isAfter(startDate) &&
+          order.createdAt.isBefore(endDate);
+    }).toList();
+  }
+
+  Future<void> fetchRange(
+      DateTime startDate, DateTime endDate, String status) async {
+    _requestState = RequestState.loading;
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      _pesanan = await APIEmail.getRiwayatAll();
+      _requestState = RequestState.loaded;
+      _isLoading = false;
+      notifyListeners();
+
+      // Filter the results based on the date range and status
+      _pesanan = getOrdersByDateRange(startDate, endDate)
+          .where((order) => order.status == status)
+          .toList();
+      notifyListeners();
+    } catch (e) {
+      _requestState = RequestState.error;
+      _isLoading = false;
+      notifyListeners();
+      throw "Can't get data";
+    }
+  }
+
   Future fetchTiket() async {
     // _requestState = RequestState.loading;
     notifyListeners();
@@ -92,6 +137,7 @@ class TiketController extends ChangeNotifier {
   // }
   Future<void> fetchRiwayatUser(emailUser) async {
     // print("ok");
+    print('fungsi $emailUser');
 
     _requestState = RequestState.loading;
     notifyListeners();
@@ -116,19 +162,18 @@ class TiketController extends ChangeNotifier {
   Future<void> fetchRiwayat(emailUser) async {
     // print("ok");
 
-    // _requestState = RequestState.loading;
+    _requestState = RequestState.loading;
     notifyListeners();
 
     try {
       _pesanan = await APIEmail.getRiwayat(email: emailUser);
-      // print(pesanan.le ngth);
-      // _requestState = RequestState.loaded;
-      for (var element in pesanan) {
-        print(element.pemesan);
-      }
+      _pesanan = await APIEmail.getRiwayat(email: emailUser);
+      // print(pesanan.length);
+      _requestState = RequestState.loaded;
+
       notifyListeners();
     } catch (e) {
-      // _requestState = RequestState.error;
+      _requestState = RequestState.error;
       notifyListeners();
       // print(e);
       throw "Cant get data";
@@ -197,15 +242,20 @@ class TiketController extends ChangeNotifier {
   }
 
   Future<void> bayar(cart) async {
+    _requestState = RequestState.loading;
+    notifyListeners();
     try {
       final result = await APIEmail.bayar(cart, totalHarga);
       Map<String, dynamic> parsedData = jsonDecode(result);
-      String url = parsedData['data'];
-      dataLink = url;
-      print(dataLink);
+      // String url =
+      dataLink = parsedData['data'];
+      _requestState = RequestState.loaded;
 
       notifyListeners();
+      print('link terbaru : $dataLink');
     } catch (e) {
+      _requestState = RequestState.error;
+      notifyListeners();
       print(e);
     }
     notifyListeners();
@@ -217,6 +267,15 @@ class TiketController extends ChangeNotifier {
     fetchRiwayaAll();
     fetchTiket();
     // _cartItems = [];
+    notifyListeners();
+  }
+
+  Future<void> reloadHalamanUser(emailUser) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    fetchRiwayatUser(emailUser);
+    // _cartItems = [];
+    print('controller  $emailUser');
     notifyListeners();
   }
 
